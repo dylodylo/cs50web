@@ -1,11 +1,17 @@
 from django.shortcuts import render, redirect
 from django import forms
+from django.http import HttpResponseRedirect
 
 from . import util
 
 class NewPage(forms.Form):
     title = forms.CharField(label="Title")
     content = forms.CharField(widget=forms.Textarea(attrs={"cols":10}))
+
+
+class EditPage(forms.Form):
+    title = forms.CharField(widget=forms.HiddenInput())
+    content = forms.CharField(widget=forms.Textarea())
 
 
 def index(request):
@@ -53,3 +59,23 @@ def new(request):
                 return redirect("wiki/"+title)
     else:
         return render(request, "encyclopedia/new.html", {"form": NewPage()})
+
+
+def edit(request, name):
+    if request.method == "POST":
+        form = EditPage(request.POST)
+        if form.is_valid():
+            content = form.cleaned_data['content']
+            util.save_entry(name, content)
+            return render(request, "encyclopedia/entry.html",{"content": util.get_entry(name), "title": name})
+
+
+        else:
+            return render(request, "encyclopedia/error.html")
+
+    if request.method == "GET":
+        content = util.get_entry(name)
+        form = EditPage(initial={"content": content, "title": name})
+        return render(request, "encyclopedia/edit.html", {"form": form, "name": name})
+
+
