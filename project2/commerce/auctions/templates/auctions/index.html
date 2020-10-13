@@ -3,5 +3,28 @@
 {% block body %}
     <h2>Active Listings</h2>
 
-    TODO
+    <table width="100%">
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Category</th>
+            <th>Descirption</th>
+            <th>User</th>
+        </tr>
+            {% for auction in auctions %}
+            <tr>
+                <td><a href="{% url 'auction' auction.id %}">{{ auction.name }}</a> </td>
+                <td>{{ auction.min_price }} </td>
+                <td>{{ auction.category }}</td>
+                <td>{{ auction.description }}</td>
+                <td>{{ auction.user }}</td>
+
+            {% empty %}
+                <h5>No active listings</h5>
+
+            {% endfor %}
+            </tr>
+    </table>
+    
+
 {% endblock %}

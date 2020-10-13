@@ -1,0 +1,12 @@
+{% extends "auctions/layout.html" %}
+{% block title %} {{ auction.name }} {% endblock %}
+
+{% block body%}
+
+    {{ auction }}
+
+    <p>{{ auction.description }}</p>
+
+    <p><a href="{% url 'index' %}">Back to all auctions</a></p>
+
+{% endblock %}
