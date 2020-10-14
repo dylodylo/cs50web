@@ -4,15 +4,17 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django import forms
+from django.contrib.auth.decorators import login_required
+from django.forms import ModelForm
 
 from .models import User, Auction, Bid, Comment
 
 
-class NewAuction(forms.Form):
-    name = forms.CharField(label="Auction name", max_length=50)
-    min_price = forms.FloatField(min_value=1)
-    description = forms.CharField(widget=forms.Textarea)
-    category = forms.ChoiceField(choices=Auction.CATEGORIES)
+
+class AuctionForm(ModelForm):
+    class Meta:
+        model = Auction
+        fields = ['name', 'min_price', 'description', 'category', 'image']
 
 
 class MakeBid(forms.Form):
@@ -113,19 +115,16 @@ def auction(request, auction_id):
 
 def new(request):
     if request.method == "POST":
-        name = request.POST['name']
-        min_price = request.POST['min_price']
-        category = request.POST['category']
-        description = request.POST['description']
+        form = AuctionForm(request.POST, request.FILES)
         try:
-            new_auction = Auction(name=name, min_price=min_price, category=category, description=description)
-            new_auction.save()
+            form.save()
         except IntegrityError:
             return render(request, "auctions/new.html", {"message": "Some error"})
         return HttpResponseRedirect(reverse("auction", args={Auction.objects.last().pk}))
-    return render(request, "auctions/new.html", {"form":NewAuction()})
+    return render(request, "auctions/new.html", {"form":AuctionForm()})
 
 
+@login_required
 def watchlist(request, user_id):
     user = request.user
     auctions = user.watchlist.all()
@@ -152,3 +151,13 @@ def delete(request, auction_id):
     user.watchlist.remove(auction)
     user.save()
     return HttpResponseRedirect(reverse('auction', args=(auction_id,)))
+
+
+def categories(request):
+    categories = Auction.CATEGORIES
+    return render(request, "auctions/categories.html", {"categories":categories})
+
+
+def category(request, category_name):
+    auctions = Auction.objects.filter(category=category_name, active=True)
+    return render (request, "auctions/category.html", {"auctions": auctions, "category": category_name})

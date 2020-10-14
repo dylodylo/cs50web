@@ -1,19 +1,18 @@
 {% extends "auctions/layout.html" %}
-{% load crispy_forms_tags %}
+
+{% block title %} Auctions for category {{ category }} {% endblock %}
 {% block body %}
     <h2>Active Listings</h2>
 
-    <table class="table table-striped" style="font-size:x-large; text-align: center;">
-        <thead class="thead-dark">
-            <th width="300px"></th>
+    <table width="100%">
+        <tr>
+            <th></th>
             <th>Name</th>
             <th>Price</th>
             <th>Category</th>
             <th>Descirption</th>
             <th>User</th>
         </tr>
-        </thead>
-        <tbody>
             {% for auction in auctions %}
             <tr>
                 <td><img src="{{ auction.image.url }}" alt="img" width="200" height="200"></td>
@@ -22,14 +21,12 @@
                 <td>{{ auction.category }}</td>
                 <td>{{ auction.description }}</td>
                 <td>{{ auction.user }}</td>
-            </tr>
+
             {% empty %}
                 <h5>No active listings</h5>
 
             {% endfor %}
-
-        </tbody>
-        
+            </tr>
     </table>
     
 

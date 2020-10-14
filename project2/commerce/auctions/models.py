@@ -17,7 +17,7 @@ class Auction(models.Model):
     description = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_auctions", default=2)
     active = models.BooleanField(default=True)
-    #watchlist = models.ManyToManyField(User, blank=True, related_name="auctions")
+    image = models.ImageField(default="default.jpg")
 
     def __str__(self):
         return f"{self.name} for {self.min_price}"
