@@ -1,11 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django import forms
 
-from .models import User, Auction
+from .models import User, Auction, Bid, Comment
 
 
 class NewAuction(forms.Form):
@@ -15,8 +15,15 @@ class NewAuction(forms.Form):
     category = forms.ChoiceField(choices=Auction.CATEGORIES)
 
 
+class MakeBid(forms.Form):
+    bid = forms.FloatField()
+
+class NewComment(forms.Form):
+    comment = forms.CharField(widget=forms.Textarea, max_length=255)
+
+
 def index(request):
-    auctions = Auction.objects.all()
+    auctions = Auction.objects.filter(active=True)
     return render(request, "auctions/index.html",{"auctions":auctions})
 
 
@@ -74,7 +81,34 @@ def register(request):
 
 def auction(request, auction_id):
     auction = Auction.objects.get(pk=auction_id)
-    return render(request, "auctions/auction.html", {"auction":auction})
+    comments = Comment.objects.filter(auction=auction)
+    user = request.user
+    if request.method == "POST":
+        
+        if "makebid" in request.POST:
+            bid = int(request.POST["bid"])           
+            new_bid = Bid(user=user, auction=auction, bid=bid)
+            if bid > auction.min_price:
+                #change min_price to bid
+                auction.min_price = bid
+                auction.save()
+                Bid.objects.filter(auction=auction).delete()
+                new_bid.save()
+            else:
+                return render(request, "auctions/auction.html", 
+                    {"auction":auction, "bid_form":MakeBid(), "message": "Your offer is too low", "comments":comments, "comment_form":NewComment()})
+        if "addcomment" in request.POST:
+            comment = request.POST["comment"]
+            new_comment = Comment(user=user, auction=auction, comment=comment)
+            new_comment.save()
+            return render(request, "auctions/auction.html", 
+                    {"auction":auction, "bid_form":MakeBid(), "message": "Your offer is too low", "comments":comments, "comment_form":NewComment()})
+    
+    if auction.active:
+        return render(request, "auctions/auction.html", {"auction":auction, "bid_form":MakeBid(), "comments":comments, "comment_form":NewComment()})
+    else:
+        bid = Bid.objects.get(auction=auction)
+        return render(request, "auctions/auction.html", {"auction":auction, "winner": bid.user, "comments":comments, "comment_form":NewComment()})
 
 
 def new(request):
@@ -90,3 +124,31 @@ def new(request):
             return render(request, "auctions/new.html", {"message": "Some error"})
         return HttpResponseRedirect(reverse("auction", args={Auction.objects.last().pk}))
     return render(request, "auctions/new.html", {"form":NewAuction()})
+
+
+def watchlist(request, user_id):
+    user = request.user
+    auctions = user.watchlist.all()
+    return render(request, "auctions/watchlist.html", {"auctions": auctions})
+
+
+def end_auction(request, auction_id):
+    auction = Auction.objects.get(pk=auction_id)
+    auction.active = False
+    auction.save()
+    return redirect(index)
+
+
+def add(request, auction_id):
+    user = request.user
+    user.watchlist.add(Auction.objects.get(pk=auction_id))
+    user.save()
+    return HttpResponseRedirect(reverse('auction', args=(auction_id,)))
+
+
+def delete(request, auction_id):
+    user = request.user
+    auction = Auction.objects.get(pk=auction_id)
+    user.watchlist.remove(auction)
+    user.save()
+    return HttpResponseRedirect(reverse('auction', args=(auction_id,)))

@@ -1,12 +1,69 @@
 {% extends "auctions/layout.html" %}
 {% block title %} {{ auction.name }} {% endblock %}
 
-{% block body%}
+{% block body %}
+
+    {% if message %}
+        <h2>{{ message }}</h2>
+    {% endif %}
 
     {{ auction }}
 
     <p>{{ auction.description }}</p>
 
+    {% if auction.active is False %}
+
+        {% if winner == user %}
+
+            <h3>Congratulations, you win the listing!</h3>
+        
+        {% else %}
+            
+            <h3>Sorry, listing has alredy end.</h3>
+        {% endif %}
+    
+    {% endif %}
+
+    {% if user.is_authenticated %}
+
+        {% if auction in user.watchlist.all %}
+            <p><a href="{% url 'delete' auction.id %}">Delete from watchlist</a></p>
+        {% else %}
+            <p><a href="{% url 'add' auction.id %}">Add to watchlist</a></p>
+        {% endif %}
+
+        {% if auction.active %}
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{ bid_form }}
+            <input type="submit" value="Make bid" name = "makebid">
+        </form>
+        {% endif %}
+
+    {% endif %}
+
+    {% if auction.user == user %}
+        <p><a href="{% url 'close' auction.id %}">End listing</a></p>
+    {% endif %}
+
+    <h2>Comments about {{ auction.name }}</h2>
+    {% for comment in comments %}
+
+        <li>{{comment.user.username}}: {{comment.comment}}</li>
+
+    {% empty %}
+    <h3>No comments. Add yours!</h3>
+    {% endfor %}
+    
+    {% if user.is_authenticated %}
+    <p>Add your comment</p>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ comment_form }}
+        <input type="submit" value="Add comment" name="addcomment">
+    </form>
+
+    {% endif %}
     <p><a href="{% url 'index' %}">Back to all auctions</a></p>
 
 {% endblock %}
