@@ -6,14 +6,18 @@ class User(AbstractUser):
     watchlist = models.ManyToManyField('Auction', related_name="watchlist")
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=100)
+    image = models.ImageField()
+
+    def __str__(self):
+        return f"{self.name}"
+
 class Auction(models.Model):
     name = models.CharField(max_length=50)
     min_price = models.FloatField()
-    CATEGORIES = [
-        ('Broomsticks', 'Broomsticks'),
-        ('Cauldrons', 'Cauldrons')
-    ]
-    category = models.CharField(max_length=20, choices=CATEGORIES)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     description = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_auctions", default=2)
     active = models.BooleanField(default=True)

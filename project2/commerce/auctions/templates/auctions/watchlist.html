@@ -3,13 +3,37 @@
 {%block title%} My watchlist {% endblock %}
 
 {% block body %} 
+<br/>
+<h2>{{ user.username }}'s watchlist: </h2>
+<br/>
+<table class="table table-striped" style="font-size:x-large; text-align: center;">
+    <thead class="thead-dark">
+        <th width="300px"></th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Category</th>
+        <th>Descirption</th>
+        <th>User</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for auction in auctions %}
+        <tr>
+            <td><img src="{{ auction.image.url }}" alt="img" width="200" height="200"></td>
+            <td><a href="{% url 'auction' auction.id %}">{{ auction.name }}</a> </td>
+            <td>{{ auction.min_price }} </td>
+            <td>{{ auction.category }}</td>
+            <td>{{ auction.description }}</td>
+            <td>{{ auction.user }}</td>
+        </tr>
+        {% empty %}
+            <h5>No active listings</h5>
 
-{{ user.username }}'s watchlist:
+        {% endfor %}
 
-{% for auction in auctions %}
+    </tbody>
+    
+</table>
 
-    <li><a href="{% url 'auction' auction.id %}">{{auction}}</a></li>
-
-{% endfor %}
 
 {% endblock %}

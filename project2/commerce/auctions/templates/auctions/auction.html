@@ -2,29 +2,33 @@
 {% block title %} {{ auction.name }} {% endblock %}
 
 {% block body %}
-
+<div style="padding: 10px;">
     {% if message %}
-        <h2>{{ message }}</h2>
+        <h3>{{ message }}</h3><br/>
     {% endif %}
-
-    <h2>{{ auction.name }} </h2>
-
-    <h4>Description: {{ auction.description }} </h4>
-
-    <img src="{{ auction.image.url }}" alt="img">
 
     {% if auction.active is False %}
 
         {% if winner == user %}
 
-            <h3>Congratulations, you win the listing!</h3>
+            <h3 style="color:red">Congratulations, you win the listing!</h3>
         
         {% else %}
             
-            <h3>Sorry, listing has alredy end.</h3>
+            <h3 style="color:blue">Sorry, listing has alredy ended.</h3>
         {% endif %}
-    
+    <br/>
     {% endif %}
+    <h1>{{ auction.name }} </h1>
+    <br/>
+    <h4>Highest bid: <b>{{ auction.min_price }}</b> by {{ bid.user }}</h4>
+    <h5>Seller: {{ auction.user }}</h5> <br/>
+    <h4>Description: {{ auction.description }} </h4>
+
+
+
+    <img src="{{ auction.image.url }}" alt="img">
+
 
     {% if user.is_authenticated %}
 
@@ -34,7 +38,7 @@
             <p><a href="{% url 'add' auction.id %}">Add to watchlist</a></p>
         {% endif %}
 
-        {% if auction.active %}
+        {% if auction.active and auction.user != user %}
         <form action="" method="POST">
             {% csrf_token %}
             {{ bid_form }}
@@ -47,17 +51,20 @@
     {% if auction.user == user %}
         <p><a href="{% url 'close' auction.id %}">End listing</a></p>
     {% endif %}
-
+    <br/><br/>
     <h2>Comments about {{ auction.name }}</h2>
     {% for comment in comments %}
-
-        <li>{{comment.user.username}}: {{comment.comment}}</li>
+        <ul>
+            <li><b>{{comment.user.username}}</b>: {{comment.comment}}</li>
+        </ul>
+        
 
     {% empty %}
-    <h3>No comments. Add yours!</h3>
+    <h4>No comments. Add yours!</h4>
     {% endfor %}
     
     {% if user.is_authenticated %}
+    <br/><br/>
     <p>Add your comment</p>
     <form action="" method="POST">
         {% csrf_token %}
@@ -66,6 +73,8 @@
     </form>
 
     {% endif %}
-    <p><a href="{% url 'index' %}">Back to all auctions</a></p>
 
+    <br/><br/>
+    <p><a href="{% url 'index' %}">Back to all auctions</a></p>
+</div>
 {% endblock %}

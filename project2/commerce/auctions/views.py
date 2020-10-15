@@ -7,11 +7,14 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from django.forms import ModelForm
 
-from .models import User, Auction, Bid, Comment
+from .models import User, Auction, Bid, Comment, Category
 
 
 
 class AuctionForm(ModelForm):
+
+    user = forms.HiddenInput()
+
     class Meta:
         model = Auction
         fields = ['name', 'min_price', 'description', 'category', 'image']
@@ -85,6 +88,7 @@ def auction(request, auction_id):
     auction = Auction.objects.get(pk=auction_id)
     comments = Comment.objects.filter(auction=auction)
     user = request.user
+    actual_bid = Bid.objects.filter(auction=auction).last()
     if request.method == "POST":
         
         if "makebid" in request.POST:
@@ -94,30 +98,33 @@ def auction(request, auction_id):
                 #change min_price to bid
                 auction.min_price = bid
                 auction.save()
-                Bid.objects.filter(auction=auction).delete()
                 new_bid.save()
+                return render(request, "auctions/auction.html", 
+                    {"auction":auction, "bid_form":MakeBid(), "comments":comments, "comment_form":NewComment(), "bid": new_bid})
             else:
                 return render(request, "auctions/auction.html", 
-                    {"auction":auction, "bid_form":MakeBid(), "message": "Your offer is too low", "comments":comments, "comment_form":NewComment()})
+                    {"auction":auction, "bid_form":MakeBid(), "message": "Your offer is too low", "comments":comments, "comment_form":NewComment(), "bid": actual_bid})
         if "addcomment" in request.POST:
             comment = request.POST["comment"]
             new_comment = Comment(user=user, auction=auction, comment=comment)
             new_comment.save()
             return render(request, "auctions/auction.html", 
-                    {"auction":auction, "bid_form":MakeBid(), "message": "Your offer is too low", "comments":comments, "comment_form":NewComment()})
+                    {"auction":auction, "bid_form":MakeBid(), "message": "Your offer is too low", "comments":comments, "comment_form":NewComment(), "bid": actual_bid})
     
     if auction.active:
-        return render(request, "auctions/auction.html", {"auction":auction, "bid_form":MakeBid(), "comments":comments, "comment_form":NewComment()})
+        return render(request, "auctions/auction.html", {"auction":auction, "bid_form":MakeBid(), "comments":comments, "comment_form":NewComment(), "bid": actual_bid})
     else:
-        bid = Bid.objects.get(auction=auction)
-        return render(request, "auctions/auction.html", {"auction":auction, "winner": bid.user, "comments":comments, "comment_form":NewComment()})
+        bid = Bid.objects.filter(auction=auction).last()
+        return render(request, "auctions/auction.html", {"auction":auction, "winner": bid.user, "comments":comments, "comment_form":NewComment(), "bid": actual_bid})
 
 
 def new(request):
     if request.method == "POST":
-        form = AuctionForm(request.POST, request.FILES)
+        form = AuctionForm(request.POST, request.FILES)  
         try:
-            form.save()
+            new_form = form.save(commit=False)
+            new_form.user = request.user
+            new_form.save()
         except IntegrityError:
             return render(request, "auctions/new.html", {"message": "Some error"})
         return HttpResponseRedirect(reverse("auction", args={Auction.objects.last().pk}))
@@ -154,10 +161,11 @@ def delete(request, auction_id):
 
 
 def categories(request):
-    categories = Auction.CATEGORIES
+    categories = Category.objects.all()
     return render(request, "auctions/categories.html", {"categories":categories})
 
 
 def category(request, category_name):
-    auctions = Auction.objects.filter(category=category_name, active=True)
+    category = Category.objects.get(name=category_name)
+    auctions = Auction.objects.filter(category=category, active=True)
     return render (request, "auctions/category.html", {"auctions": auctions, "category": category_name})
