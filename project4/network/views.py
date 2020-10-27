@@ -3,12 +3,21 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms
+import datetime
 
-from .models import User
+from .models import User, Post
 
+class NewPost(forms.Form):
+    post = forms.CharField(widget=forms.Textarea)
 
 def index(request):
-    return render(request, "network/index.html")
+    if request.method == "POST":
+        post = request.POST["post"]
+        new_post = Post(post=post, user=request.user, likes=0)
+        new_post.save()
+
+    return render(request, "network/index.html", {"posts": Post.objects.all(), "form": NewPost()})
 
 
 def login_view(request):

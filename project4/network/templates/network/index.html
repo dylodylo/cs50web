@@ -1,5 +1,22 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    TODO
+    {% if user.is_authenticated %}
+    <div id="newpost" class="newpost">
+        New Post
+        <form id="postform" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Post">
+        </form>
+    </div>
+    {% endif %}
+    {% for post in posts %}
+    <div class="post">
+        <p>{{ post.post }}</p>
+        {{ post.likes }}
+        {{post.user.username}} {{ post.date }}
+    </div>
+    
+    {% endfor %}
 {% endblock %}

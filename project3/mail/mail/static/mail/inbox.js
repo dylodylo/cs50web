@@ -118,7 +118,7 @@ function load_mailbox(mailbox) {
       .then(email => {
       // Print email
       console.log(email);
-      document.querySelector('#email-view').innerHTML = `<h3> <b>Subject: </b>${email.subject} </h3> <h5> <b>From:</b> ${email.sender} </h5> <h6> <b>Date:</b> ${email.timestamp} </h6><br/> <p> ${email.body} </p>`
+      document.querySelector('#email-view').innerHTML = `<h3> <b>Subject: </b>${email.subject} </h3> <h5> <b>From:</b> ${email.sender} </h5> <h6> <b>Date:</b> ${email.timestamp} </h6><br/> <p> <pre>${email.body}</pre> </p>`
       button = document.querySelector('#archive-button')
       button.style.display = 'block';
       if (email.archived === false)
