@@ -88,7 +88,11 @@ function load_mailbox(mailbox) {
     console.log(emails);
     
   const table = document.getElementById('emails-table');
-  table.innerHTML = ''
+  table.innerHTML = ` <tr>
+  <th>Sender</th>
+  <th>Subject</th>
+  <th>Date</th>
+</tr>`
   emails.forEach(item => show_mail_table(item, table));
   const rows = document.querySelectorAll("tr[data-email-id]");
   console.log(rows);
@@ -114,10 +118,10 @@ function load_mailbox(mailbox) {
       .then(email => {
       // Print email
       console.log(email);
-      document.querySelector('#email-view').innerHTML = `<h3> ${email.subject} </h3> <h5> From: ${email.sender} </h5> <h6> Date: ${email.timestamp} </h6><br/> <p> ${email.body} </p>`
+      document.querySelector('#email-view').innerHTML = `<h3> <b>Subject: </b>${email.subject} </h3> <h5> <b>From:</b> ${email.sender} </h5> <h6> <b>Date:</b> ${email.timestamp} </h6><br/> <p> ${email.body} </p>`
       button = document.querySelector('#archive-button')
       button.style.display = 'block';
-      if (row.archived === false)
+      if (email.archived === false)
       {
         button.innerHTML = 'Archive mail';
       }
