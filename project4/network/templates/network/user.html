@@ -1,0 +1,25 @@
+{% extends "network/layout.html" %}
+{% block body %}
+<h2>{{ username }}</h2>
+{{ following_count }} Following {{ followers }} Followers
+<form method="POST">
+    {% csrf_token %}
+    
+    <button type="submit" id="followbutton">
+
+    </button>
+</form>
+{% if user in following %}
+Unfollow
+{ % else % }
+Follow
+{% endif %}
+{% for post in posts %}
+<div class="post">
+    <p>{{ post.post }}</p>
+    {{ post.likes }}
+    <a href="{% url 'user' post.user.username %}">{{post.user.username}}</a> {{ post.date }}
+</div>
+
+{% endfor %}
+{% endblock %}

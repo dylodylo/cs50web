@@ -3,7 +3,8 @@ from django.db import models
 
 
 class User(AbstractUser):
-    pass
+    followers = models.ManyToManyField("User", related_name="user_followers", blank=True)
+    following = models.ManyToManyField("User", related_name="user_following", blank=True)
 
 
 class Post(models.Model):
@@ -11,4 +12,6 @@ class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     likes = models.IntegerField(default=0)
     date = models.DateTimeField(auto_now_add=True, blank=True)
+
+    
 

@@ -17,7 +17,7 @@ def index(request):
         new_post = Post(post=post, user=request.user, likes=0)
         new_post.save()
 
-    return render(request, "network/index.html", {"posts": Post.objects.all(), "form": NewPost()})
+    return render(request, "network/index.html", {"posts": Post.objects.all().order_by("-id"), "form": NewPost()})
 
 
 def login_view(request):
@@ -70,3 +70,13 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+def user(request, username):
+    user = User.objects.get(username=username)
+    if request.method == "POST":
+        follower = request.user
+        user.followers.add(follower)
+        user.save()
+    
+    posts = Post.objects.filter(user=user)
+    return render(request, "network/user.html", {"username":username, "posts":posts, "followers": user.followers.count(), "following_count": user.following.count(), "following": user.following})

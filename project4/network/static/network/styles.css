@@ -2,3 +2,10 @@
     padding: 20px;
     margin: 10px;
 }
+
+.post {
+    padding-left:20px;
+    margin-bottom: 20px;
+    border: solid, 5px, black;
+    background-color: #fbfbfb;
+}
