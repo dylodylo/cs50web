@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
+from django.core.paginator import Paginator
 import datetime
 
 from .models import User, Post
@@ -17,7 +18,10 @@ def index(request):
         new_post = Post(post=post, user=request.user, likes=0)
         new_post.save()
 
-    return render(request, "network/index.html", {"posts": Post.objects.all().order_by("-id"), "form": NewPost()})
+    page = request.GET.get('page', 1)
+    posts_list = Post.objects.all().order_by("-id")
+    paginator = Paginator(posts_list, 10)
+    return render(request, "network/index.html", {"posts": paginator.page(page), "form": NewPost()})
 
 
 def login_view(request):
@@ -75,8 +79,26 @@ def user(request, username):
     user = User.objects.get(username=username)
     if request.method == "POST":
         follower = request.user
-        user.followers.add(follower)
+        if follower in user.followers.all():
+            user.followers.remove(follower)
+            follower.following.remove(user)
+        else:
+            user.followers.add(follower)
+            follower.following.add(user)
         user.save()
-    
-    posts = Post.objects.filter(user=user)
-    return render(request, "network/user.html", {"username":username, "posts":posts, "followers": user.followers.count(), "following_count": user.following.count(), "following": user.following})
+    page = request.GET.get('page', 1)
+    posts_list = Post.objects.filter(user=user).order_by("-id")
+    paginator = Paginator(posts_list, 10)
+    return render(request, "network/index.html", {"posts": paginator.page(page), "form": NewPost()})
+    return render(request, "network/user.html", {"username":username, "posts":posts, "followers": user.followers.count(), "following_count": user.following.count(), "following": user.followers.all(), "user":request.user})
+
+
+def following(request):
+    user = User.objects.get(username=request.user.username)
+    if len(user.following.all()) == 0:
+        return render(request, "network/index.html", {"posts": [], "form": NewPost()})  
+    else:
+        page = request.GET.get('page', 1)
+        posts_list = Post.objects.filter(user__in = user.following.all()).order_by("-id")
+        paginator = Paginator(posts_list, 10)
+        return render(request, "network/index.html", {"posts": paginator.page(page), "form": NewPost()})
