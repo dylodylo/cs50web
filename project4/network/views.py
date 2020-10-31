@@ -6,6 +6,11 @@ from django.urls import reverse
 from django import forms
 from django.core.paginator import Paginator
 import datetime
+from django.http import JsonResponse
+import json
+
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 from .models import User, Post
 
@@ -14,9 +19,16 @@ class NewPost(forms.Form):
 
 def index(request):
     if request.method == "POST":
-        post = request.POST["post"]
-        new_post = Post(post=post, user=request.user, likes=0)
-        new_post.save()
+        newpostform = NewPost(request.POST)
+        if newpostform.is_valid():
+            post = request.POST["post"]
+            new_post = Post(post=post, user=request.user, likes=0)
+            new_post.save()
+        else:
+            newpostbody = request.POST.get("editedpost", False)
+            post_id = request.POST.get("postid", False)
+            print(post_id)
+            print(newpostbody)
 
     page = request.GET.get('page', 1)
     posts_list = Post.objects.all().order_by("-id")
@@ -89,8 +101,7 @@ def user(request, username):
     page = request.GET.get('page', 1)
     posts_list = Post.objects.filter(user=user).order_by("-id")
     paginator = Paginator(posts_list, 10)
-    return render(request, "network/index.html", {"posts": paginator.page(page), "form": NewPost()})
-    return render(request, "network/user.html", {"username":username, "posts":posts, "followers": user.followers.count(), "following_count": user.following.count(), "following": user.followers.all(), "user":request.user})
+    return render(request, "network/user.html", {"username":username, "posts":paginator.page(page), "followers": user.followers.count(), "following_count": user.following.count(), "following": user.followers.all(), "user":request.user})
 
 
 def following(request):
@@ -102,3 +113,30 @@ def following(request):
         posts_list = Post.objects.filter(user__in = user.following.all()).order_by("-id")
         paginator = Paginator(posts_list, 10)
         return render(request, "network/index.html", {"posts": paginator.page(page), "form": NewPost()})
+
+
+
+@login_required
+@csrf_exempt
+def editpost(request):
+    print(request.method)
+    if request.method == "POST":
+        data = json.loads(request.body)
+        post_id = data["id"]
+        new_post = data["new_post"]
+        print(post_id)
+        print(new_post)
+        try:
+            post = Post.objects.get(pk=int(post_id))
+            if post.user == request.user:
+                post.post = new_post
+                post.save()
+                print(post)
+                print(post.user)
+                print(request.user)
+                return JsonResponse({f'something'}, status=201)
+        except:
+            return JsonResponse({f'something'}, status=404)
+
+    else:
+        return JsonResponse({f'something'}, status=400)

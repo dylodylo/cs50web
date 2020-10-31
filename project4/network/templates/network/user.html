@@ -4,7 +4,7 @@
 {{ following_count }} Following {{ followers }} Followers
 {% if user.is_authenticated %}
 {% if user.username != username %}
-<form method="POST">
+<form method="POST" id="followform">
     {% csrf_token %}
 
         <button type="submit" id="followbutton">

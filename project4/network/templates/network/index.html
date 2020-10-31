@@ -16,6 +16,15 @@
         <p>{{ post.post }}</p>
         {{ post.likes }}
         <a href="{% url 'user' post.user.username %}">{{post.user.username}}</a> {{ post.date }}
+
+
+        
+            <a href="#" class="editpostlink" id="editpost-{{ post.id }}" data-post-id="{{post.id}}">Edit</a>
+        <div class="editpost" id="editpostdiv-{{ post.id }}" style="display:none;">
+            <textarea form="editpostform" id="editedpost-{{ post.id }}">{{post.post}}</textarea>
+            <button id="editbutton-{{post.id}}" data-post-id="{{ post.id }}">Save</button>
+        </div>
+        
     </div>
     {% empty %}
     No posts. Follow somebody!
