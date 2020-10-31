@@ -120,7 +120,7 @@ def following(request):
 @csrf_exempt
 def editpost(request):
     print(request.method)
-    if request.method == "POST":
+    if request.method == "PUT":
         data = json.loads(request.body)
         post_id = data["id"]
         new_post = data["new_post"]
@@ -134,9 +134,12 @@ def editpost(request):
                 print(post)
                 print(post.user)
                 print(request.user)
-                return JsonResponse({f'something'}, status=201)
+                return JsonResponse({"message": "no error"}, status=201)
+
+            else: 
+                return JsonResponse({"message": "error"}, status=404)
         except:
-            return JsonResponse({f'something'}, status=404)
+            return JsonResponse({"message": "error"}, status=404)
 
     else:
-        return JsonResponse({f'something'}, status=400)
+        return JsonResponse({"message": "error"}, status=400)

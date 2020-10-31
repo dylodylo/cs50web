@@ -12,19 +12,22 @@
     </div>
     {% endif %}
     {% for post in posts %}
-    <div class="post" id="post">
-        <p>{{ post.post }}</p>
+    <div class="post" id="post-{{post.id}}">
+        <p id="postbody-{{post.id}}">{{ post.post }}</p>
         {{ post.likes }}
         <a href="{% url 'user' post.user.username %}">{{post.user.username}}</a> {{ post.date }}
 
 
-        
-            <a href="#" class="editpostlink" id="editpost-{{ post.id }}" data-post-id="{{post.id}}">Edit</a>
+        {% if user.is_authenticated %}
+            <button class="likebutton"></button>
+        {% endif %}
+        {% if post.user.username == user.username %}
+            <button class="editpostlink" id="editpost-{{ post.id }}" data-post-id="{{post.id}}">Edit</button>
         <div class="editpost" id="editpostdiv-{{ post.id }}" style="display:none;">
             <textarea form="editpostform" id="editedpost-{{ post.id }}">{{post.post}}</textarea>
             <button id="editbutton-{{post.id}}" data-post-id="{{ post.id }}">Save</button>
         </div>
-        
+        {% endif %}
     </div>
     {% empty %}
     No posts. Follow somebody!

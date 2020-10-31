@@ -25,14 +25,27 @@ function editpost(edititem) {
 
     button = document.querySelector(`#editbutton-${post_id}`)
     button.addEventListener('click', () => {
-        new_post = document.querySelector(`#editedpost-${post_id}`).innerHTML
+        new_post = document.querySelector(`#editedpost-${post_id}`).value
+        console.log(new_post)
         fetch('/editpost', {
-            method: "POST",
+            method: "PUT",
             body: JSON.stringify({
                 id: post_id,
                 new_post: new_post
             })
+        }
+       )
+       .then(response => response.json()) 
+       .then(data => {
+            if (data.message === "no error"){
+                e_post.style.display = 'none'
+                document.querySelector(`#postbody-${post_id}`).innerHTML = new_post;
+           }
+               
         });
-        
+
+    
     });
+
+
 }
