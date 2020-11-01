@@ -18,12 +18,41 @@
 {% endif %}
 {% endif %}
 {% for post in posts %}
-<div class="post" id="post">
-    <p>{{ post.post }}</p>
-    {{ post.likes }}
-    <a href="{% url 'user' post.user.username %}">{{post.user.username}}</a> {{ post.date }}
+<div class="post" id="post-{{post.id}}">
+    <h5 class= "card-title"><b><a href="{% url 'user' post.user.username %}">{{post.user.username}}</a></b> </h4>
+    <p class="post-content" id="postbody-{{post.id}}">{{ post.post }}</p>
+    <div class="likes">
+        <p>Likes: </p><div class="likecounter" id="likecounter-{{ post.id }}"> {{ post.likes.count }}</div>
+        {% if user.is_authenticated %}
+        
+        <p class="likebutton" id="likebutton-{{ post.id }}" data-post-id="{{post.id}}">
+            
+        {% if user not in post.likes.all %}    
+            <img src="https://img.icons8.com/carbon-copy/100/000000/like--v2.png">
+        {% else %}
+            <img src="https://img.icons8.com/plasticine/100/000000/like.png">
+        {% endif %}
+        </p>
+        {% endif %}
+    </div>
+    <h6 class="card-subtitle mb-2 text-muted">{{ post.date }}</h6>
+    {% if post.user.username == user.username %}
+        <button class="btn btn-primary" id="editpost-{{ post.id }}" data-post-id="{{post.id}}">Edit</button>
+    <div class="editpost" id="editpostdiv-{{ post.id }}" style="display:none;">
+        <textarea form="editpostform" id="editedpost-{{ post.id }}">{{post.post}}</textarea>
+        <button class="btn btn-primary" id="editbutton-{{post.id}}" data-post-id="{{ post.id }}">Save</button>
+    </div>
+    {% endif %}
 </div>
-{% endfor %}
+{% empty %}
+        <p>
+        {% if username == user.username %}
+        No posts. Write something!
+        {% else %}
+        No posts from this user.
+        {% endif %}
+        </p>
+    {% endfor %}
 
 {% if posts.has_other_pages %}
         <ul class="pagination">

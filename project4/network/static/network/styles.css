@@ -1,11 +1,47 @@
 .newpost {
     padding: 20px;
-    margin: 10px;
+    margin-bottom: 10px;
+    border: solid 1px #d0d0d0;
+    border-radius: 10px;
 }
 
+
 .post {
-    padding-left:20px;
     margin-bottom: 20px;
-    border: solid, 5px, black;
-    background-color: #fbfbfb;
+    padding: 10px 10px 10px 10px;
+    border: solid 1px #d0d0d0;
+    border-radius: 20px;
+}
+
+.body {
+    padding: 20px;
+}
+
+.post-content {
+    font-size: large;
+}
+
+.post-date {
+    color: grey;
+    font-size: small;
+}
+
+.username a{
+    color:black;
+}
+
+.likes {
+    display: flex;
+}
+
+.likes img {
+    width: 25px;
+}
+
+.likecounter {
+    margin-right: 10px;
+}
+
+.postinput {
+    width: 100%;
 }

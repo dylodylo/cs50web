@@ -1,31 +1,41 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    {% if user.is_authenticated %}
+    <h2>{{ header }}</h2>
+    {% if user.is_authenticated and header == "All Posts" %}
     <div id="newpost" class="newpost">
-        New Post
+        <h4>New Post</h4>
         <form id="postform" method="POST">
             {% csrf_token %}
-            {{ form }}
+            {{ form.as_p }}
             <input type="submit" value="Post">
         </form>
     </div>
     {% endif %}
     {% for post in posts %}
     <div class="post" id="post-{{post.id}}">
-        <p id="postbody-{{post.id}}">{{ post.post }}</p>
-        {{ post.likes }}
-        <a href="{% url 'user' post.user.username %}">{{post.user.username}}</a> {{ post.date }}
-
-
-        {% if user.is_authenticated %}
-            <button class="likebutton"></button>
-        {% endif %}
+        <h5 class= "card-title"><b><a href="{% url 'user' post.user.username %}">{{post.user.username}}</a></b> </h4>
+        <p class="post-content" id="postbody-{{post.id}}">{{ post.post }}</p>
+        <div class="likes">
+            <p>Likes: </p><div class="likecounter" id="likecounter-{{ post.id }}"> {{ post.likes.count }}</div>
+            {% if user.is_authenticated %}
+            
+            <p class="likebutton" id="likebutton-{{ post.id }}" data-post-id="{{post.id}}">
+                
+            {% if user not in post.likes.all %}    
+                <img src="https://img.icons8.com/carbon-copy/100/000000/like--v2.png">
+            {% else %}
+                <img src="https://img.icons8.com/plasticine/100/000000/like.png">
+            {% endif %}
+            </p>
+            {% endif %}
+        </div>
+        <h6 class="card-subtitle mb-2 text-muted">{{ post.date }}</h6>
         {% if post.user.username == user.username %}
-            <button class="editpostlink" id="editpost-{{ post.id }}" data-post-id="{{post.id}}">Edit</button>
+            <button class="btn btn-primary" id="editpost-{{ post.id }}" data-post-id="{{post.id}}">Edit</button>
         <div class="editpost" id="editpostdiv-{{ post.id }}" style="display:none;">
             <textarea form="editpostform" id="editedpost-{{ post.id }}">{{post.post}}</textarea>
-            <button id="editbutton-{{post.id}}" data-post-id="{{ post.id }}">Save</button>
+            <button class="btn btn-primary" id="editbutton-{{post.id}}" data-post-id="{{ post.id }}">Save</button>
         </div>
         {% endif %}
     </div>

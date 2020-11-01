@@ -15,14 +15,14 @@ from django.contrib.auth.decorators import login_required
 from .models import User, Post
 
 class NewPost(forms.Form):
-    post = forms.CharField(widget=forms.Textarea)
+    post = forms.CharField(widget=forms.Textarea(attrs={'rows':2, 'class':'postinput'}), label=False)
 
 def index(request):
     if request.method == "POST":
         newpostform = NewPost(request.POST)
         if newpostform.is_valid():
             post = request.POST["post"]
-            new_post = Post(post=post, user=request.user, likes=0)
+            new_post = Post(post=post, user=request.user)
             new_post.save()
         else:
             newpostbody = request.POST.get("editedpost", False)
@@ -33,7 +33,7 @@ def index(request):
     page = request.GET.get('page', 1)
     posts_list = Post.objects.all().order_by("-id")
     paginator = Paginator(posts_list, 10)
-    return render(request, "network/index.html", {"posts": paginator.page(page), "form": NewPost()})
+    return render(request, "network/index.html", {"posts": paginator.page(page), "form": NewPost(), "header": "All Posts"})
 
 
 def login_view(request):
@@ -112,7 +112,7 @@ def following(request):
         page = request.GET.get('page', 1)
         posts_list = Post.objects.filter(user__in = user.following.all()).order_by("-id")
         paginator = Paginator(posts_list, 10)
-        return render(request, "network/index.html", {"posts": paginator.page(page), "form": NewPost()})
+        return render(request, "network/index.html", {"posts": paginator.page(page), "form": NewPost(), "header": "Following"})
 
 
 
@@ -138,6 +138,31 @@ def editpost(request):
 
             else: 
                 return JsonResponse({"message": "error"}, status=404)
+        except:
+            return JsonResponse({"message": "error"}, status=404)
+
+    else:
+        return JsonResponse({"message": "error"}, status=400)
+
+
+@login_required
+@csrf_exempt
+def likepost(request):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        post_id = data["id"]
+        user = User.objects.get(username=request.user.username)
+        try:
+            post = Post.objects.get(pk=int(post_id))
+            if user in post.likes.all():
+                post.likes.remove(user)
+                like = False
+            else:
+                post.likes.add(user)
+                like = True
+            post.save()
+            return JsonResponse({"message": "no error", "like": like, "likes":post.likes.count()}, status=201)
+
         except:
             return JsonResponse({"message": "error"}, status=404)
 
