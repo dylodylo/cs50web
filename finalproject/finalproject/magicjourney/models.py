@@ -21,3 +21,4 @@ class Player(models.Model):
     potions = models.IntegerField(default=0)
     charisma = models.IntegerField(default=0)
     money = models.IntegerField(default=0) #in knuts
+    

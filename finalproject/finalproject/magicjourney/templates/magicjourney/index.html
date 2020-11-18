@@ -8,10 +8,12 @@ Magic Journey
 <h1>Hello World</h1>
 
 {% if user.is_authenticated %}
-<div class="player-card">
+<div class="player-card" style="display: none;">
     <div class="container">
         <h4><b>{{ user.username }}</b></h4>
-        <p>Level: {{ user.level }}</p>
+        {% for field in fields %}
+        <p>{{ field.0|title }}: {{ field.1 }}</p>
+        {% endfor %}
     </div>
 </div>
 <button id="start">Start your journey!</button>

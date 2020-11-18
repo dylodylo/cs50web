@@ -3,13 +3,24 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.db import IntegrityError
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from .utils import get_all_fields
 
-from .models import User
+from .models import User, Player
 # Create your views here.
 
 
 def index(request):
-    return render(request, "magicjourney/index.html")
+    fields_values = []
+    try:
+        user = User.objects.get(username=request.user.username)
+        player = Player.objects.get(user=user)
+        fields_values = get_all_fields(player)
+    except:
+        player = None
+    return render(request, "magicjourney/index.html", {"player": player, "fields": fields_values})
 
 
 def register(request):
@@ -56,3 +67,20 @@ def login_view(request):
             return render(request, "magicjourney/login.html", {"message": "Invalide username and/or password."})
     else:
         return render(request, "magicjourney/login.html")
+
+
+@login_required
+@csrf_exempt
+def create_player(request):
+    print("run function")
+    if request.method == "PUT":
+        user = User.objects.get(username=request.user.username)
+        try:
+            Player.objects.get(user=user)
+            return JsonResponse({"message": "Player already exists"}, status=202)
+        except:
+            player = Player.objects.create(user=user)
+            player.save()
+            return JsonResponse({"message": "Player created"}, status=201)
+    else:
+        return JsonResponse(status=404)
