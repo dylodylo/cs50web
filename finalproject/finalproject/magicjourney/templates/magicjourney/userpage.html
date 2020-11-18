@@ -1,0 +1,11 @@
+{% extends 'magicjourney/base.html' %}
+
+{% block title %}{{ my_user.username }} {% endblock %}
+
+{% block body %}
+
+<h2>Hello, {{ my_user.username }}!</h2>
+
+<h4>Your magic level: {{ my_user.level }}</h4> 
+
+{% endblock %}

@@ -6,4 +6,16 @@ Magic Journey
 
 {% block body %}
 <h1>Hello World</h1>
+
+{% if user.is_authenticated %}
+<div class="player-card">
+    <div class="container">
+        <h4><b>{{ user.username }}</b></h4>
+        <p>Level: {{ user.level }}</p>
+    </div>
+</div>
+<button id="start">Start your journey!</button>
+
+<div id="narrator" style="display: none;"></div>
+{% endif %}
 {% endblock %}

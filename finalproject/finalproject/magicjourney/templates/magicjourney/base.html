@@ -4,19 +4,30 @@
 <html>
     <head>
         <link href="{% static 'magicjourney/styles.css' %}" rel="stylesheet"/>
+        <script src="{% static 'magicjourney/script.js' %}"></script>
         <title>{% block title %}{% endblock %}</title>
     </head>
     <body>
+        <div class="content">
         <nav>
             <ul>
-                <li><a href="#">Start</a></li>
-                <li><a href="#">Register</a></li>
-                <li><a href="#">Login</a></li>
+                <li><a href="{% url 'index' %}">Start</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'userpage' user.username %}">{{ user.username }}</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% else %}
+                <li><a href="{% url 'register' %}">Register</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
+                {% endif %}
             </ul>
         </nav>
-        {% block body %}
-        {% endblock %}
-        <footer>
+        
+            <div class="content-inside">
+                {% block body %}
+                {% endblock %}
+            </div>
+        </div>
+        <footer class="footer">
             &copy; dylodylo 2020
         </footer>
     </body>
