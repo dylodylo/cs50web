@@ -1,0 +1,23 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="{% static 'magicjourney/styles.css' %}" rel="stylesheet"/>
+        <title>{% block title %}{% endblock %}</title>
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <li><a href="#">Start</a></li>
+                <li><a href="#">Register</a></li>
+                <li><a href="#">Login</a></li>
+            </ul>
+        </nav>
+        {% block body %}
+        {% endblock %}
+        <footer>
+            &copy; dylodylo 2020
+        </footer>
+    </body>
+</html>
