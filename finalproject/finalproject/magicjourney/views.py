@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from .utils import get_all_fields
-
+import json
 from .models import User, Player
 # Create your views here.
 
@@ -84,3 +84,19 @@ def create_player(request):
             return JsonResponse({"message": "Player created"}, status=201)
     else:
         return JsonResponse(status=404)
+
+
+@login_required
+@csrf_exempt
+def update_skill(request):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        skill = data['skill']
+        value = data['value']
+        user = User.objects.get(username=request.user.username)
+        player = Player.objects.get(user=user)
+        field = player._meta.get_field(skill)
+        current_value = getattr(player, skill)
+        setattr(player, skill, current_value+value)
+        player.save()
+        return JsonResponse({"value": current_value+value},status=201)
