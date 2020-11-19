@@ -72,7 +72,6 @@ def login_view(request):
 @login_required
 @csrf_exempt
 def create_player(request):
-    print("run function")
     if request.method == "PUT":
         user = User.objects.get(username=request.user.username)
         try:
@@ -100,3 +99,16 @@ def update_skill(request):
         setattr(player, skill, current_value+value)
         player.save()
         return JsonResponse({"value": current_value+value},status=201)
+
+
+@login_required
+@csrf_exempt
+def change_blood(request):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        blood = data['blood']
+        user = User.objects.get(username=request.user.username)
+        player = Player.objects.get(user=user)
+        player.blood = blood
+        player.save()
+        return JsonResponse({}, status=201)
