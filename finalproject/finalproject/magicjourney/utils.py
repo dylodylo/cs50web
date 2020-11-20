@@ -15,3 +15,8 @@ def check_level(player, value):
         player.level += 1
         player.skills_points += player.level
         player.hp += 10
+
+def get_serialized_fields(object):
+    fields = [(f.verbose_name, f.name) for f in object._meta.get_fields()]
+    fields = [f[0].capitalize() for f in fields if f[0] != "ID"]
+    return fields

@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     narrator = document.querySelector('#narrator')
     card = document.querySelector('.player-card')
     choices = document.querySelector('#choices')
+    player_location = document.querySelector('#location')
     add_toogle_start();
 })
 
@@ -46,8 +47,6 @@ function start_journey() {
         })
     }
 
-    
-
 function back_to_journey() {
     card.style.display = 'block'
     fetch('/get_story_status')
@@ -61,8 +60,9 @@ function back_to_journey() {
 
 function choose_family() {
     update_story(getFuncName())
-    
-    narrator.innerHTML = "Choose your family." 
+    player_location.innerHTML = "Home"
+    get_story(getFuncName(), narrator)
+    narrator.style.display = 'block'
     button.innerHTML = "This is my family!"
     choices.innerHTML = `<select id="family">
     <option value="Muggle">Muggle</option>
@@ -70,7 +70,6 @@ function choose_family() {
     <option value="Pure-blood">Pure-blood</option>
     </select>`
     choices.style.display = "block"
-
     button.onclick = blood_toogle
 }
 
@@ -89,7 +88,7 @@ function choose_subjects(){
 
     narrator.style.display = 'block'
     choices.style.display = 'block'
-    narrator.innerHTML = "Which subjects do you love most in Hogwart? (choose 3)"
+    get_story(getFuncName(), narrator)
     button.innerHTML = "I loved these subjects"
     choices.innerHTML = `<input type="checkbox" id="charms" class="subject" value="charms">
     <label for="charms"> Charms</label><br>
@@ -135,7 +134,7 @@ function choose_house() {
     narrator.style.display = "block"
     choices.style.display = "block"
     button.onclick = house_toogle
-    narrator.innerHTML = "In which house were you in Hogwart?"
+    get_story(getFuncName(), narrator)
     button.innerHTML = "This was my house!"
     choices.innerHTML = `<select id="house">
     <option value="Gryffindor">Gryffindor</option>
@@ -157,8 +156,114 @@ function house_toogle()
 function intro_story()
 {
     update_story(getFuncName())
-    narrator.innerHTML = "Some intro story about summer after end of magic school, find book with treasures description. You want to go to London to prepere yourself"
+    narrator.style.display = 'block'
+    choices.style.display = 'none'
+    get_story(getFuncName(), narrator)
     button.innerHTML = "Go to Diagon Alley"
+    button.onclick = diagon_alley
+    console.log(button.innerHTML)
+}
+
+
+function diagon_alley(){
+    update_story(getFuncName())
+    button.innerHTML = "Prepare to expedition"
+    console.log(button.innerHTML)
+    button.onclick = () => alert("Function not implemented yet!")
+    console.log(button)
+    player_location.innerHTML = "Diagon Alley"
+    get_story(getFuncName(), narrator)
+    narrator.style.display = 'block'
+    choices.innerHTML = `<button id="ollivanders" onclick="ollivanders()">Go to Ollivanders</button>
+    <button id="malkin" onclick="malkin()">Go to Madam Malkin's Robes for All Occasions</button>
+    <button id="apothecary" onclick="apothecary()">Go to Apothecary</button>
+    <button id="bookstore" onclick="bookstore()">Whizz Hard Books</button>`
+    choices.style.display = "block"
+
+}
+
+function malkin(){
+    player_location.innerHTML = "Madam Malkin's Robes for All Occasions"
+    choices.style.display = 'none'
+    get_story(getFuncName(), narrator)
+    item_table("Robe")
+    button.innerHTML = "Go back to Diagon Alley"
+    button.onclick = diagon_alley
+
+}
+
+function item_table(model_name, ){
+    var url = new URL('http://127.0.0.1:8000/get_all_items')
+    var params = {model:model_name}
+    var table = document.querySelector("#items-table")
+    table.innerHTML = ''
+    table.style.display = 'block'
+    url.search = new URLSearchParams(params).toString()
+    fetch(url)
+    .then(response => response.json())
+    .then(element => {
+        fields = element[1]
+        items = element[0]
+        console.log(element[0])
+        var table_columns = document.createElement("tr")
+
+        fields.forEach(field => {
+            var new_column = document.createElement("th")
+            new_column.innerHTML = field
+            table.append(new_column)
+
+        })
+        items.forEach(item => {
+            var row = table.insertRow()
+            item.forEach(element => {
+            var cell = row.insertCell()
+            cell.innerHTML = element
+            })
+            var cell = row.insertCell()
+            cell.innerHTML = "Buy"
+        })
+    
+    })
+}
+
+function get_story(func_name, narrator)
+{
+    var url = new URL('http://127.0.0.1:8000/get_story')
+    var params = {function_name:func_name}
+    url.search = new URLSearchParams(params).toString()
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+        story = data.story
+        console.log(story)
+        narrator.innerHTML = story
+    })
+}
+
+function ollivanders(){
+    choices.style.display = 'none'
+    player_location.innerHTML = "Ollivanders"
+    get_story(getFuncName(), narrator)
+    item_table("Wand")
+    button.innerHTML = "Go back to Diagon Alley"
+    button.onclick = diagon_alley
+}
+
+function apothecary(){
+    choices.style.display = 'none'
+    player_location.innerHTML = "Apothecary"
+    get_story(getFuncName(), narrator)
+    button.innerHTML = "Go back to Diagon Alley"
+    button.onclick = diagon_alley
+}
+
+function bookstore(){
+    choices.style.display = 'none'
+    player_location.innerHTML = "Whizz Hard Books"
+    get_story(getFuncName(), narrator)
+    item_table("Book")
+    button.innerHTML = "Go back to Diagon Alley"
+    button.onclick = diagon_alley
 }
 
 async function house_skills(house){

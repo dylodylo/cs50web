@@ -6,8 +6,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from .utils import get_all_fields, check_level
+from .utils import get_all_fields, check_level, get_serialized_fields
 import json
+from django.apps import apps
 from .models import User, Player
 # Create your views here.
 
@@ -132,3 +133,21 @@ def save_story_status(request):
         player.story_status = function
         player.save()
         return JsonResponse({}, status=201)
+
+
+@login_required
+def get_all_items(request):
+    model_name = request.GET.get('model', '')
+    model = apps.get_model(User._meta.app_label, model_name, True)
+    items = model.objects.all()
+    fields = get_serialized_fields(model)
+    print([item.getlist() for item in items])
+    return JsonResponse([[item.getlist() for item in items], fields], status=200, safe=False)
+
+
+@login_required
+def get_story(request):
+    story_name = request.GET.get('function_name', '')
+    story_file = open("stories/"+story_name+".txt", "r")
+    story = story_file.read()
+    return JsonResponse({"story": story}, status=200)
