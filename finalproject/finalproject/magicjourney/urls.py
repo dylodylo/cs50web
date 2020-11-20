@@ -9,6 +9,5 @@ urlpatterns = [
     path("user/<str:username>", views.userpage, name="userpage"),
     path("create_player", views.create_player),
     path("update_skill", views.update_skill),
-    path("change_blood", views.change_blood),
 ]
 

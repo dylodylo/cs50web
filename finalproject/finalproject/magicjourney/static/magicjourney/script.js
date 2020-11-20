@@ -6,9 +6,7 @@ function add_toogle_start()
 {
     var button = document.querySelector('#start')
     console.log(button)
-    button.addEventListener("click", () => {
-        start_journey()
-    })
+    button.onclick = start_journey
 }
 
 function start_journey() {
@@ -24,11 +22,8 @@ function start_journey() {
     narrator.innerHTML = "This is start of great journey!"
     narrator.style.display = 'block'
     card.style.display = 'block'
-    button.removeEventListener("click", start_journey)
     button.innerHTML = "Continue"
-    button.addEventListener("click", () => {
-        choose_family()
-    })
+    button.onclick = choose_family
 }
 
 function choose_family() {
@@ -36,17 +31,13 @@ function choose_family() {
     var narrator = document.querySelector('#narrator')
     var choices = document.querySelector('#choices')
 
-    button.removeEventListener("click", choose_family)
-
 
     narrator.innerHTML = "Choose your family." 
     button.innerHTML = "This is my family!"
     //choices.innerHTML = `<select id="family"><option value="Muggle">Muggle</option><option value="Half-blood">Half-blood</option><option value="Pure-blood">Pure-blood</option></select>`
     choices.style.display = "block"
 
-    button.addEventListener("click", () => {
-        blood_toogle()  
-    })
+    button.onclick = blood_toogle
 }
 
 function blood_toogle()
@@ -55,69 +46,122 @@ function blood_toogle()
     var narrator = document.querySelector('#narrator')
     var choices = document.querySelector('#choices')
 
-    button.removeEventListener("click", blood_toogle)
     var blood_choice = document.querySelector('#family')
     console.log(blood_choice)
     var blood = blood_choice.value
     console.log(blood)
-    blood_change(blood)
+    update_skill(['blood', blood])
 
 
-    // narrator.innerHTML = "Which subjects do you love most in Hogwart? (choose 3)"
-    // button.innerHTML = "I loved these subjects"
-    // choices.innerHTML = `<input type="checkbox" id="charms" value="Bike">
-    // <label for="charms"> Charms</label><br>
-    // <input type="checkbox" id="dada" value="Car">
-    // <label for="dada"> Defence Against the Dark Arts</label><br>
-    // <input type="checkbox" id="flying" value="Boat">
-    // <label for="flying"> Flying</label><br>
-    // <input type="checkbox" id="Herbology" value="Bike">
-    // <label for="Herbology"> Herbology</label><br>
-    // <input type="checkbox" id="Potions" value="Car">
-    // <label for="Potions"> Potions</label><br>
-    // <input type="checkbox" id="transfiguration" value="Boat">
-    // <label for="transfiguration"> Transfiguration</label><br>  `
+    narrator.innerHTML = "Which subjects do you love most in Hogwart? (choose 3)"
+    button.innerHTML = "I loved these subjects"
+    choices.innerHTML = `<input type="checkbox" id="charms" class="subject" value="charms">
+    <label for="charms"> Charms</label><br>
+    <input type="checkbox" id="dada" class="subject" value="dada">
+    <label for="dada"> Defence Against the Dark Arts</label><br>
+    <input type="checkbox" id="flying" class="subject" value="flying">
+    <label for="flying"> Flying</label><br>
+    <input type="checkbox" id="herbology" class="subject" value="herbology">
+    <label for="herbology"> Herbology</label><br>
+    <input type="checkbox" id="potions" class="subject" value="potions">
+    <label for="potions"> Potions</label><br>
+    <input type="checkbox" id="transfiguration" class="subject" value="transfiguration">
+    <label for="transfiguration"> Transfiguration</label><br>  `
 
-    // button.addEventListener("click", () => {
-    //     subjects_toogle()
-    // })
+    button.onclick = subjects_toogle
 }
 
 function subjects_toogle()
 {
-    var button = document.querySelector('#start')
-    var narrator = document.querySelector('#narrator')
-    var choices = document.querySelector('#choices')
+    var subjects = document.querySelectorAll('.subject')
+    var counter = 0
+    var checked_subjects = []
+    subjects.forEach(item => {
+        if (item.checked == true) {
+            counter++
+            checked_subjects.push(item.value)
+        }
+    })
+    console.log(checked_subjects)
+    console.log(counter)
+    if (counter != 3) {
+        alert("Choose exactly 3 subjects!")
+    }
 
-    button.removeEventListener("click", subjects_toogle)
+    else {
+        subjects_skills(checked_subjects)
+        var button = document.querySelector('#start')
+        var narrator = document.querySelector('#narrator')
+        var choices = document.querySelector('#choices')
+
+        button.onclick = choose_house
+        narrator.innerHTML = "In which house were you in Hogwart?"
+        button.innerHTML = "This was my house!"
+        choices.innerHTML = `<select id="house">
+        <option value="Gryffindor">Gryffindor</option>
+        <option value="Ravenclaw">Ravenclaw</option>
+        <option value="Hufflepuff">Hufflepuff</option>
+        <option value="Slytherin">Slytherin</option>
+        </select>`
+
+    }  
 }
 
-function blood_change(blood)
+function choose_house()
 {
-    fetch('/change_blood', {
-        method: "PUT",
-        body: JSON.stringify({
-            blood: blood
-        })
-    })
-    .then(response => response.json())
-    var field = document.querySelector("#blood-value")
-    field.innerHTML = blood
+    var house_choice = document.querySelector("#house")
+    var house = house_choice.value
+
+    update_skill(['house', house])
+
+
 }
 
-function update_skill(skill, value) {
-    fetch('/update_skill', {
-        method: "PUT",
-        body: JSON.stringify({
-            skill: skill,
-            value: value
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        var new_value = data.value
-        var field = document.querySelector(`#${skill}-value`)
-        field.innerHTML = new_value
-    })
+async function subjects_skills(subjects){
+    skill_to_update = []
+    for (const item of subjects) {
+        if (item === "charms"){
+            skill_to_update.push(["charms", 10])
+        }
+        else if (item === "dada"){
+            skill_to_update.push(["defence", 5])
+            skill_to_update.push(["charms", 5])
+        }
+        else if (item === "flying"){
+            skill_to_update.push(["hp", 5])
+            skill_to_update.push(["defence", 5])
+        }
+        else if (item === "herbology"){
+            skill_to_update.push(["hp", 5])
+            skill_to_update.push(["potions", 5])
+        }
+        else if (item === "potions"){
+            skill_to_update.push(["potions", 10])
+        }
+        else if (item === "transfiguration"){
+            skill_to_update.push(["transfiguration", 10])
+        }
+    }
 
+    for (const item of skill_to_update) {
+        const result = await update_skill(item)
+        console.log(result)
+    }
+}
+
+async function update_skill(skills) {
+    
+    await fetch('/update_skill', {
+            method: "PUT",
+            body: JSON.stringify({
+                skill: skills[0],
+                value: skills[1]
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            var new_value = data.value
+            var field = document.querySelector(`#${skills[0]}-value`)
+            field.innerHTML = new_value
+        })
 }
