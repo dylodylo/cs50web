@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from .utils import get_all_fields
+from .utils import get_all_fields, check_level
 import json
 from .models import User, Player
 # Create your views here.
@@ -88,21 +88,47 @@ def create_player(request):
 @login_required
 @csrf_exempt
 def update_skill(request):
+    
     if request.method == "PUT":
         data = json.loads(request.body)
         skill = data['skill']
         value = data['value']
+        print("start function",skill,value)
         user = User.objects.get(username=request.user.username)
         player = Player.objects.get(user=user)
         if isinstance(value, int):
             field = player._meta.get_field(skill)
             current_value = getattr(player, skill)
+            if skill == 'xp':
+                check_level(player, value)
+            check_level(player, value)
             setattr(player, skill, current_value+value)
-            print(current_value, current_value+value)
             player.save()
-            print(field)
             return JsonResponse({"value": current_value+value},status=201)
 
         else:
+            print(skill,value)
             setattr(player,skill,value)
+            player.save()
             return JsonResponse({"value": value},status=201)
+
+
+@login_required
+def get_story_status(request):
+    user = User.objects.get(username=request.user.username)
+    player = Player.objects.get(user=user)
+    status = player.story_status
+    return JsonResponse({"status": status}, status=200)
+
+
+@login_required
+@csrf_exempt
+def save_story_status(request):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        function = data['function']
+        user = User.objects.get(username=request.user.username)
+        player = Player.objects.get(user=user)
+        player.story_status = function
+        player.save()
+        return JsonResponse({}, status=201)

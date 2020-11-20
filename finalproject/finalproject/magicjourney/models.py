@@ -7,9 +7,9 @@ class User(AbstractUser):
     
 class Player(models.Model):
     blood_choices = [
-        ("muggle", "Muggle"),
-        ("half-blood", "Half-blood"),
-        ("pure-blood", "Pure-blood")
+        ("Muggle", "Muggle"),
+        ("Half-blood", "Half-blood"),
+        ("Pure-blood", "Pure-blood")
     ]
     houses = [
         ("Gryffindor", "Gryffindor"),
@@ -18,6 +18,9 @@ class Player(models.Model):
         ("Slytherin", "Slytherin")
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    story_status = models.CharField(default="choose_family", max_length=50)
+    skills_points = models.IntegerField(default=5)
+    xp = models.IntegerField(default = 100)
     level = models.IntegerField(default=0)
     blood = models.CharField(choices=blood_choices, blank=True, max_length=30)
     house = models.CharField(choices=houses, blank=True, max_length=30)
