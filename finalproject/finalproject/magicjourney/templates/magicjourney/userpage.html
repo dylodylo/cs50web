@@ -1,11 +1,54 @@
 {% extends 'magicjourney/base.html' %}
 
-{% block title %}{{ my_user.username }} {% endblock %}
+{% block title %}{{ player.user.username }} {% endblock %}
 
 {% block body %}
 
-<h2>Hello, {{ my_user.username }}!</h2>
+<h2>Hello, {{ player.user.username }}!</h2>
 
-<h4>Your magic level: {{ my_user.level }}</h4> 
+<h4>Your magic level: {{ player.level }}</h4> 
+
+<h4>Your skills:</h4>
+{% for field in fields %}
+    <p>{{ field.0|title }}: <span id="{{field.0}}-value">{{ field.1 }}</span></p>
+{% endfor %}
+<h4>Your wand:</h4>
+<h5 id="players-wand">
+    {{ player.wand }} 
+    {% if player.wand != None %}
+    <button data-item='wand' onclick="unequip(this)">Unequip</button>
+    {% endif %}
+</h5>
+
+<h4>Your robe:</h4>
+<h5 id='players-robe'>
+    {{ player.robe }} 
+    {% if player.robe != None %}
+    <button data-item='robe' onclick="unequip(this)">Unequip</button>
+    {% endif %}
+</h5>
+
+<h4>Your book:</h4>
+<h5 id='players-book'>
+    {{ player.book }} 
+    {% if player.book != None %}
+    <button data-item='book' onclick="unequip(this)">Unequip</button>
+    {% endif %}
+</h5>
+
+<h4>Your equipment:</h4>
+
+<div id="equipment">
+    {% for name, items in equipment.items %}
+    <div class="equipment-category" id="{{name}}">
+    <p>{{ name }}s</p>
+    {% for item in items %}
+    {% if item != player.wand and item != player.robe and item != player.book %}
+    <p style="color: red;" class="item" id="{{item.id}}">{{ item }}<button class="equip-button" onclick="equip(this)" data-item="{{item.id}}" data-category="{{name}}">Equip</button></p>
+    {% endif %}
+    {% endfor %}
+    </div>
+    {% endfor %}
+</div>
 
 {% endblock %}

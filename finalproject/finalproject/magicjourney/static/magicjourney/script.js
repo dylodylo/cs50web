@@ -4,7 +4,10 @@ document.addEventListener('DOMContentLoaded', function() {
     card = document.querySelector('.player-card')
     choices = document.querySelector('#choices')
     player_location = document.querySelector('#location')
-    add_toogle_start();
+    if (button != null){
+        add_toogle_start();
+    }
+        
 })
 
 function getFuncName() {
@@ -168,6 +171,7 @@ function intro_story()
 function diagon_alley(){
     update_story(getFuncName())
     button.innerHTML = "Prepare to expedition"
+    document.querySelector('#items-table').style.display = 'none'
     console.log(button.innerHTML)
     button.onclick = () => alert("Function not implemented yet!")
     console.log(button)
@@ -204,25 +208,53 @@ function item_table(model_name, ){
     .then(element => {
         fields = element[1]
         items = element[0]
-        console.log(element[0])
         var table_columns = document.createElement("tr")
-
+        console.log(items)
         fields.forEach(field => {
-            var new_column = document.createElement("th")
-            new_column.innerHTML = field
-            table.append(new_column)
-
+            if (field != "Id"){
+                var new_column = document.createElement("th")
+                new_column.innerHTML = field
+                table.append(new_column)
+            }
         })
         items.forEach(item => {
             var row = table.insertRow()
-            item.forEach(element => {
+            
+            for (var i = 1; i < item.length; i++){
+                var cell = row.insertCell()
+                cell.innerHTML = item[i]
+            }
             var cell = row.insertCell()
-            cell.innerHTML = element
-            })
-            var cell = row.insertCell()
-            cell.innerHTML = "Buy"
+            cell.innerHTML = `<button onclick="buy_item(this)" data-id="${item[0]}" data-model="${model_name}">Buy</a>`
         })
     
+    })
+}
+
+
+async function buy_item(button){
+    item_id = button.getAttribute('data-id')
+    model = button.getAttribute('data-model')
+    await fetch('/buy_item', {
+        method: "PUT",
+        body: JSON.stringify({
+            item_id: item_id,
+            model_name: model
+        })
+    })
+    .then(response => {
+        console.log(response.status)
+        if (response.status === 304){
+            alert("You already have this!")
+            response.json()
+            alert(data.message)
+        }
+
+        else if(response.status === 201){
+            alert("You bought item!")
+            //here get story for narrator
+            narrator.innerHTML = `You bought ${model}! You are almost ready for expedition!`
+        }
     })
 }
 
@@ -235,7 +267,6 @@ function get_story(func_name, narrator)
     .then(response => response.json())
     .then(data => {
         story = data.story
-        console.log(story)
         narrator.innerHTML = story
     })
 }
@@ -276,7 +307,7 @@ async function house_skills(house){
         
         case "Hufflepuff":
             await update_skill(['hp', 10])
-            await update_skill(['herbology', 10])
+            await update_skill(['charisma', 10])
             break
 
         case "Ravenclaw":
@@ -341,4 +372,38 @@ async function update_skill(skills) {
             var field = document.querySelector(`#${skills[0]}-value`)
             field.innerHTML = new_value
         })
+}
+
+async function equip(button)
+{
+    itemId = button.getAttribute("data-item")
+    category = button.getAttribute("data-category")
+    console.log(itemId)
+    console.log(category)
+    await fetch('/change_equipment', {
+        method: "PUT",
+        body: JSON.stringify({
+            category: category,
+            item: itemId
+        })
+    })
+    .then(response => response.json())
+    .then((data) => {
+        var item = data.item
+        document.querySelector(`#players-${category.toLowerCase()}`).innerHTML = item
+    })
+    location.reload()
+}
+
+async function unequip(button)
+{
+    item = button.getAttribute("data-item")
+    await fetch('/unequip', {
+        method: "PUT",
+        body: JSON.stringify({
+            item: item
+        })
+    })
+    .then(response => response.json())
+    location.reload()
 }

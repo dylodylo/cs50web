@@ -31,6 +31,12 @@ class Player(models.Model):
     potions = models.IntegerField(default=0)
     charisma = models.IntegerField(default=0)
     money = models.IntegerField(default=0) #in knuts
+    wand = models.ForeignKey('Wand', on_delete=models.CASCADE, blank=True, null=True, default=None, verbose_name="wand")
+    robe = models.ForeignKey('Robe', on_delete=models.CASCADE, blank=True, null=True, default=None, verbose_name="robe")
+    book = models.ForeignKey('Book', on_delete=models.CASCADE, blank=True, null=True, default=None, verbose_name="book")
+
+    def __str__(self):
+        return f"{self.user}"
     
 
 class Wand(models.Model):
@@ -43,12 +49,13 @@ class Wand(models.Model):
     transfiguration = models.IntegerField(default=0)
     potions = models.IntegerField(default=0)
     price = models.IntegerField(default=0)
+    players = models.ManyToManyField(Player, blank=True, related_name="equipment_wand")
 
     def __str__(self):
         return f"{self.length}\", {self.wood}, {self.core}"
 
     def getlist(self):
-        return [self.length, self.flexibility, self.core, self.wood, self.defence, self.charms, self.transfiguration, self.potions, self.price]
+        return [self.id, self.length, self.flexibility, self.core, self.wood, self.defence, self.charms, self.transfiguration, self.potions, self.price]
 
 
 class Robe(models.Model):
@@ -56,6 +63,7 @@ class Robe(models.Model):
     hp = models.IntegerField(default=0)
     defence = models.IntegerField(default=0)
     price = models.IntegerField(default=0)
+    players = models.ManyToManyField(Player, blank=True, related_name="equipment_robe")
 
     def __str__(self):
         return f"{self.name}"
@@ -69,7 +77,7 @@ class Robe(models.Model):
         }
 
     def getlist(self):
-        return [self.name, self.hp, self.defence, self.price]
+        return [self.id, self.name, self.hp, self.defence, self.price]
 
 
 
@@ -92,9 +100,10 @@ class Book(models.Model):
     charm2 = models.ForeignKey(Charm, blank=True, on_delete=models.CASCADE, related_name="second_charm")
     charm3 = models.ForeignKey(Charm, blank=True, on_delete=models.CASCADE, related_name="third_charm")
     price = models.IntegerField(default=0)
+    players = models.ManyToManyField(Player, blank=True, related_name="equipment_book")
 
     def __str__(self):
         return f"{self.name}"
 
     def getlist(self):
-        return [self.name, self.charm1.__str__(), self.charm2.__str__(), self.charm3.__str__(), self.price]
+        return [self.id, self.name, self.charm1.__str__(), self.charm2.__str__(), self.charm3.__str__(), self.price]

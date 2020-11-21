@@ -6,10 +6,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from .utils import get_all_fields, check_level, get_serialized_fields
+from .utils import get_all_fields, check_level, get_serialized_fields, get_equipment, get_int_fields, get_equipment_values, change_skill
 import json
 from django.apps import apps
-from .models import User, Player
+from .models import User, Player, Wand, Robe, Book, Charm
 # Create your views here.
 
 
@@ -46,8 +46,16 @@ def register(request):
 
 
 def userpage(request, username):
-    user_ = User.objects.get(username=username)
-    return render(request, "magicjourney/userpage.html", {"my_user": user_})
+    user = User.objects.get(username=username)
+    player = Player.objects.get(user=user)
+    equipment = get_equipment(player)
+    print(equipment)
+    fields_values = []
+    #try:
+    fields_values = get_all_fields(player)
+    #except:
+        #player = None
+    return render(request, "magicjourney/userpage.html", {"player": player, "equipment": equipment, "fields": fields_values})
 
 
 def logout_view(request):
@@ -99,13 +107,10 @@ def update_skill(request):
         player = Player.objects.get(user=user)
         if isinstance(value, int):
             field = player._meta.get_field(skill)
-            current_value = getattr(player, skill)
+            new_value = change_skill(player, skill, value)
             if skill == 'xp':
                 check_level(player, value)
-            check_level(player, value)
-            setattr(player, skill, current_value+value)
-            player.save()
-            return JsonResponse({"value": current_value+value},status=201)
+            return JsonResponse({"value": new_value},status=201)
 
         else:
             print(skill,value)
@@ -151,3 +156,68 @@ def get_story(request):
     story_file = open("stories/"+story_name+".txt", "r")
     story = story_file.read()
     return JsonResponse({"story": story}, status=200)
+
+
+@login_required
+@csrf_exempt
+def change_equipment(request):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        category = data['category']
+        item_id = data['item']
+        model = apps.get_model(User._meta.app_label, category, True)
+        user = User.objects.get(username=request.user.username)
+        player = Player.objects.get(user=user)
+        item = model.objects.get(id=item_id)
+
+        current_item = getattr(player, category.lower())
+        if current_item != None:
+            skills_to_remove = get_equipment_values(current_item)
+            #skills_to_remove = [s[1]*(-1) for s in skills_to_remove] #change value of skill from + to -
+            for skill in skills_to_remove:
+                change_skill(player, skill[0], -skill[1])
+        setattr(player, category.lower(), item)
+        skills = get_equipment_values(item)
+        for skill in skills:
+            change_skill(player, skill[0], skill[1])
+        return JsonResponse({"item": item.__str__(), "skills": skills}, status=201)
+
+
+@login_required
+@csrf_exempt
+def buy_item(request):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        item_id = data['item_id']
+        model_name = data['model_name']
+        model = apps.get_model(User._meta.app_label, model_name, True)
+        user = User.objects.get(username=request.user.username)
+        player = Player.objects.get(user=user)
+        item = model.objects.get(id=item_id)
+
+        if player in item.players.all():
+            return JsonResponse({"message": "You already have this!"}, status=304)
+        if player.money < item.price:
+            return JsonResponse({"message": "You don't have enough money!"}, status=304)
+        else:
+            item.players.add(player)
+            change_skill(player, 'money', -item.price)
+        
+            return JsonResponse({}, status=201)
+
+@login_required
+@csrf_exempt
+def unequip(request):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        item_name = data['item']
+        user = User.objects.get(username=request.user.username)
+        player = Player.objects.get(user=user)
+        item = getattr(player, item_name)
+        print(item)
+        setattr(player, item_name, None)
+        player.save()
+        skills = get_equipment_values(item)
+        for skill in skills:
+            change_skill(player, skill[0], -skill[1])
+        return JsonResponse({}, status=201)

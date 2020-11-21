@@ -13,5 +13,8 @@ urlpatterns = [
     path("save_story_status", views.save_story_status),
     path("get_all_items", views.get_all_items),
     path("get_story", views.get_story),
+    path("change_equipment", views.change_equipment),
+    path("buy_item", views.buy_item),
+    path("unequip", views.unequip),
 ]
 
