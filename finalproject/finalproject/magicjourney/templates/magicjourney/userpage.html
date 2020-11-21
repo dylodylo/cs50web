@@ -12,6 +12,7 @@
 {% for field in fields %}
     <p>{{ field.0|title }}: <span id="{{field.0}}-value">{{ field.1 }}</span></p>
 {% endfor %}
+    <p>Money: {{ player.money_in_galleons }}</p>
 <h4>Your wand:</h4>
 <h5 id="players-wand">
     {{ player.wand }} 

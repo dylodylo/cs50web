@@ -252,9 +252,11 @@ async function buy_item(button){
 
         else if(response.status === 201){
             alert("You bought item!")
-            //here get story for narrator
+            //here get story for narrator and update money
             narrator.innerHTML = `You bought ${model}! You are almost ready for expedition!`
+    
         }
+        location.reload()
     })
 }
 

@@ -37,6 +37,13 @@ class Player(models.Model):
 
     def __str__(self):
         return f"{self.user}"
+
+    
+    def money_in_galleons(self):
+        galleons = self.money // 493
+        sickles = (self.money - galleons*493) // 29
+        knuts = self.money - galleons*493 - sickles*29
+        return f"{galleons} g {sickles} s {knuts} k"
     
 
 class Wand(models.Model):
@@ -48,7 +55,8 @@ class Wand(models.Model):
     charms = models.IntegerField(default=0)
     transfiguration = models.IntegerField(default=0)
     potions = models.IntegerField(default=0)
-    price = models.IntegerField(default=0)
+    price_knuts = models.IntegerField(default=0)
+    price = models.CharField(max_length=50, blank=True)
     players = models.ManyToManyField(Player, blank=True, related_name="equipment_wand")
 
     def __str__(self):
@@ -57,12 +65,23 @@ class Wand(models.Model):
     def getlist(self):
         return [self.id, self.length, self.flexibility, self.core, self.wood, self.defence, self.charms, self.transfiguration, self.potions, self.price]
 
+    def price_in_galleons(self):
+        galleons = self.price_knuts // 493
+        sickles = (self.price_knuts - galleons*493) // 29
+        knuts = self.price_knuts - galleons*493 - sickles*29
+        return f"{galleons} g {sickles} s {knuts} k"
+
+    def save(self, *args, **kwargs):
+        self.price = self.price_in_galleons()
+        super(Wand, self).save(*args, **kwargs)
+
 
 class Robe(models.Model):
     name = models.CharField(max_length=30)
     hp = models.IntegerField(default=0)
     defence = models.IntegerField(default=0)
-    price = models.IntegerField(default=0)
+    price_knuts = models.IntegerField(default=0)
+    price = models.CharField(max_length=50, blank=True)
     players = models.ManyToManyField(Player, blank=True, related_name="equipment_robe")
 
     def __str__(self):
@@ -78,6 +97,17 @@ class Robe(models.Model):
 
     def getlist(self):
         return [self.id, self.name, self.hp, self.defence, self.price]
+
+    
+    def price_in_galleons(self):
+        galleons = self.price_knuts // 493
+        sickles = (self.price_knuts - galleons*493) // 29
+        knuts = self.price_knuts - galleons*493 - sickles*29
+        return f"{galleons} g {sickles} s {knuts} k"
+
+    def save(self, *args, **kwargs):
+        self.price = self.price_in_galleons()
+        super(Robe, self).save(*args, **kwargs)
 
 
 
@@ -99,7 +129,8 @@ class Book(models.Model):
     charm1 = models.ForeignKey(Charm, blank=True, on_delete=models.CASCADE, related_name="first_charm")
     charm2 = models.ForeignKey(Charm, blank=True, on_delete=models.CASCADE, related_name="second_charm")
     charm3 = models.ForeignKey(Charm, blank=True, on_delete=models.CASCADE, related_name="third_charm")
-    price = models.IntegerField(default=0)
+    price_knuts = models.IntegerField(default=0)
+    price = models.CharField(max_length=50, blank=True)
     players = models.ManyToManyField(Player, blank=True, related_name="equipment_book")
 
     def __str__(self):
@@ -107,3 +138,13 @@ class Book(models.Model):
 
     def getlist(self):
         return [self.id, self.name, self.charm1.__str__(), self.charm2.__str__(), self.charm3.__str__(), self.price]
+
+    def price_in_galleons(self):
+        galleons = self.price_knuts // 493
+        sickles = (self.price_knuts - galleons*493) // 29
+        knuts = self.price_knuts - galleons*493 - sickles*29
+        return f"{galleons} g {sickles} s {knuts} k"
+
+    def save(self, *args, **kwargs):
+        self.price = self.price_in_galleons()
+        super(Book, self).save(*args, **kwargs)

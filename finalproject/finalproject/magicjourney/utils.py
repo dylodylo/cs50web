@@ -3,7 +3,7 @@ from django.apps import apps
 from django.db.models.fields import *
 
 def get_all_fields(object):
-    no_fields = ["id", "user", "story_status", "wand", "book", "robe"]
+    no_fields = ["id", "user", "story_status", "wand", "book", "robe", 'money', 'price_knuts']
     fields = []
     for f in object._meta.get_fields():
         try:
@@ -26,7 +26,7 @@ def check_level(player, value):
         player.hp += 10
 
 def get_serialized_fields(object):
-    no_fields = ["player", "players"]
+    no_fields = ["player", "players", 'price_knuts']
     fields = [f.name for f in object._meta.get_fields()]
     fields = [f.capitalize() for f in fields if not f in no_fields]
     return fields
