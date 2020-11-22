@@ -242,21 +242,19 @@ async function buy_item(button){
             model_name: model
         })
     })
-    .then(response => {
-        console.log(response.status)
-        if (response.status === 304){
-            alert("You already have this!")
-            response.json()
-            alert(data.message)
-        }
-
-        else if(response.status === 201){
-            alert("You bought item!")
-            //here get story for narrator and update money
-            narrator.innerHTML = `You bought ${model}! You are almost ready for expedition!`
-    
-        }
-        location.reload()
+    .then(response => response.json())
+    .then(data => {
+        var status = data.status
+        var message = data.message
+        alert(message)
+        console.log(status)
+        if (status)
+        {
+            var money = data.money
+            var story = data.story
+            document.querySelector("#money").innerHTML = money
+            narrator.innerHTML = story
+        }               
     })
 }
 

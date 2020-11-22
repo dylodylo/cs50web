@@ -196,14 +196,15 @@ def buy_item(request):
         item = model.objects.get(id=item_id)
 
         if player in item.players.all():
-            return JsonResponse({"message": "You already have this!"}, status=304)
-        if player.money < item.price_knuts:
-            return JsonResponse({"message": "You don't have enough money!"}, status=304)
+            return JsonResponse({"message": "You already have this!", "status": False})
+        elif player.money < item.price_knuts:
+            return JsonResponse({"message": "You don't have enough money!", "status": False})
         else:
             item.players.add(player)
             change_skill(player, 'money', -item.price_knuts)
             #add story based on bought item category
-            return JsonResponse({"money": player.money_in_galleons(), "story":"story"}, status=201)
+            return JsonResponse({"money": player.money_in_galleons(), "story":"story", "message":"You bought item", "status": True}, status=201)
+            
 
 @login_required
 @csrf_exempt

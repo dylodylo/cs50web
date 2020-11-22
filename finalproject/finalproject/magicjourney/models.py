@@ -118,6 +118,7 @@ class Charm(models.Model):
     required_value = models.IntegerField(default=0)
     effects_skill = models.CharField(max_length=20, blank=True)
     effects_value = models.IntegerField(default=0)
+    players = models.ManyToManyField(Player, blank=True, related_name="known_charms")
     
 
     def __str__(self):
