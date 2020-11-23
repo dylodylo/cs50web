@@ -171,7 +171,7 @@ def change_equipment(request):
         item = model.objects.get(id=item_id)
 
         current_item = getattr(player, category.lower())
-        if current_item != None:
+        if current_item != None and category != "Book":
             skills_to_remove = get_equipment_values(current_item)
             #skills_to_remove = [s[1]*(-1) for s in skills_to_remove] #change value of skill from + to -
             for skill in skills_to_remove:
@@ -180,6 +180,7 @@ def change_equipment(request):
         skills = get_equipment_values(item)
         for skill in skills:
             change_skill(player, skill[0], skill[1])
+        player.save()
         return JsonResponse({"item": item.__str__(), "skills": skills}, status=201)
 
 

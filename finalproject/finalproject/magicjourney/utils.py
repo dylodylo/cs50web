@@ -1,6 +1,5 @@
-
 from django.apps import apps
-from django.db.models.fields import *
+from django.db.models.fields import IntegerField, AutoField
 
 def get_all_fields(object):
     no_fields = ["id", "user", "story_status", "wand", "book", "robe", 'money', 'price_knuts']
@@ -50,7 +49,7 @@ def get_int_fields(model):
     for field in fields:
         if isinstance(field, IntegerField) and not isinstance(field, AutoField):
             skills.append(field)
-    skills.remove(model._meta.get_field('price'))
+    skills.remove(model._meta.get_field('price_knuts'))
     return skills
         
 
