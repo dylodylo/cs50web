@@ -1,4 +1,4 @@
-import {house_toogle, subjects_toogle, blood_toogle, player_location, button} from '../script.js'
+import {house_toogle, subjects_toogle, blood_toogle, player_location, button, narrator, choices} from '../script.js'
 import {get_story, back_to_journey, update_story} from './story_status.mjs'
 import {diagon_alley} from './diagon_alley.mjs'
 

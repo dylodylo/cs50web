@@ -1,5 +1,6 @@
 import {choices, button, narrator, player_location} from '../script.js'
 import {update_story, get_story} from './story_status.mjs'
+import {prepare_to_expedition} from './preparation.mjs'
 
 function ollivanders(){
     choices.style.display = 'none'
@@ -40,7 +41,7 @@ function malkin(){
 function items_table(model_name, ){
     var url = new URL('http://127.0.0.1:8000/get_all_items')
     var params = {model:model_name}
-    var table = document.querySelector("#items-table")
+    var table = document.querySelector("#table")
     table.innerHTML = ''
     table.style.display = 'block'
     url.search = new URLSearchParams(params).toString()
@@ -77,7 +78,7 @@ function diagon_alley(){
     document.querySelector('#items-table').style.display = 'none'
     console.log(button.innerHTML)
     //button.onclick = () => alert("Function not implemented yet!")
-    button.onclick = ollivanders
+    button.onclick = prepare_to_expedition
     console.log(button)
     player_location.innerHTML = "Diagon Alley"
     get_story(diagon_alley.name, narrator)

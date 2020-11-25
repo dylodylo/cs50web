@@ -124,6 +124,9 @@ class Charm(models.Model):
     def __str__(self):
         return f"{self.name}"
 
+    def getlist(self):
+        return [self.name, self.description, self.required_skill, self.required_value, self.effects_skill, self.effects_value]
+
 
 class Book(models.Model):
     name = models.CharField(max_length=30)

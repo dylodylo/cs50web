@@ -3,6 +3,7 @@ import {get_story, back_to_journey, update_story} from './modules/story_status.m
 import {ollivanders, apothecary, bookstore, malkin, items_table, diagon_alley} from './modules/diagon_alley.mjs'
 import {buy_item, equip, unequip} from './modules/equipment.mjs'
 import {update_skill, house_skills, subjects_skills} from './modules/skills.mjs'
+import { train_skill, train, learn_charm } from './modules/preparation.mjs'
 
 export var button
 export var narrator
@@ -17,6 +18,9 @@ window.malkin = malkin
 window.buy_item = buy_item
 window.equip = equip
 window.unequip = unequip
+window.train_skill = train_skill
+window.train = train
+window.learn_charm = learn_charm
 
 document.addEventListener('DOMContentLoaded', function() {
     button = document.querySelector('#start')

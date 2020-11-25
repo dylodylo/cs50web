@@ -1,5 +1,6 @@
 import {card, button} from '../script.js'
 import {start_journey, choose_family, choose_subjects, choose_house, intro_story} from './story.mjs'
+import {prepare_to_expedition} from './preparation.mjs'
 import {diagon_alley} from './diagon_alley.mjs'
 
 function get_story(func_name, narrator)

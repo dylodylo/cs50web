@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from .utils import get_all_fields, check_level, get_serialized_fields, get_equipment, get_int_fields, get_equipment_values, change_skill
 import json
 from django.apps import apps
+from markdown2 import Markdown
 from .models import User, Player, Wand, Robe, Book, Charm
 # Create your views here.
 
@@ -223,3 +224,21 @@ def unequip(request):
         for skill in skills:
             change_skill(player, skill[0], -skill[1])
         return JsonResponse({}, status=201)
+
+
+def faq(request):
+    help_file = open("help/faq.md", "r")
+    faq = help_file.read()
+    markdowner = Markdown()
+
+    return render(request, "magicjourney/faq.html", {"faq": markdowner.convert(faq)})
+
+
+def book(request):
+    user = User.objects.get(username=request.user.username)
+    player = Player.objects.get(user=user)
+    if player.book == None:
+        return JsonResponse({"status":False, "message":"You don't have any book equiped. Go to your player and equip book!"})
+
+    charms = [player.book.charm1.getlist(), player.book.charm2.getlist(), player.book.charm3.getlist()]
+    return JsonResponse({"status": True, "charms": charms, "book_name": player.book.name})
