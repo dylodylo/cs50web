@@ -8,9 +8,15 @@ async function update_skill(skills) {
         })
         .then(response => response.json())
         .then(data => {
-            var new_value = data.value
-            var field = document.querySelector(`#${skills[0]}-value`)
-            field.innerHTML = new_value
+            var message = data.message
+            if (!message){
+                var new_value = data.value
+                var field = document.querySelector(`#${skills[0]}-value`)
+                field.innerHTML = new_value
+            }
+            else {
+                alert(message)
+            }
         })
 }
 

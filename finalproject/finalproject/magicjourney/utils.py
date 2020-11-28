@@ -2,7 +2,7 @@ from django.apps import apps
 from django.db.models.fields import IntegerField, AutoField
 
 def get_all_fields(object):
-    no_fields = ["id", "user", "story_status", "wand", "book", "robe", 'money', 'price_knuts']
+    no_fields = ["id", "user", "story_status", "wand", "book", "robe", 'money', 'price_knuts', "training_actions"]
     fields = []
     for f in object._meta.get_fields():
         try:

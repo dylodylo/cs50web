@@ -34,6 +34,7 @@ class Player(models.Model):
     wand = models.ForeignKey('Wand', on_delete=models.CASCADE, blank=True, null=True, default=None, verbose_name="wand")
     robe = models.ForeignKey('Robe', on_delete=models.CASCADE, blank=True, null=True, default=None, verbose_name="robe")
     book = models.ForeignKey('Book', on_delete=models.CASCADE, blank=True, null=True, default=None, verbose_name="book")
+    training_actions = models.IntegerField(default=4)
 
     def __str__(self):
         return f"{self.user}"

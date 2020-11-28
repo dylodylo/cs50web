@@ -54,9 +54,10 @@ def userpage(request, username):
     fields_values = []
     #try:
     fields_values = get_all_fields(player)
+    charms = Charm.objects.filter(players=player)
     #except:
         #player = None
-    return render(request, "magicjourney/userpage.html", {"player": player, "equipment": equipment, "fields": fields_values})
+    return render(request, "magicjourney/userpage.html", {"player": player, "equipment": equipment, "fields": fields_values, "charms": charms})
 
 
 def logout_view(request):
@@ -107,17 +108,24 @@ def update_skill(request):
         user = User.objects.get(username=request.user.username)
         player = Player.objects.get(user=user)
         if isinstance(value, int):
+            if player.story_status == "prepare_to_expedition":
+                if player.training_actions <= 0:
+                    return JsonResponse({"value": value, "message":"You spend all the time! It's time to go!"})
+                player.training_actions -=1
+                player.save()
             field = player._meta.get_field(skill)
             new_value = change_skill(player, skill, value)
+            print("Hello from the other side")
             if skill == 'xp':
                 check_level(player, value)
-            return JsonResponse({"value": new_value},status=201)
+
+            return JsonResponse({"value": new_value, "message": None},status=201)
 
         else:
             print(skill,value)
             setattr(player,skill,value)
             player.save()
-            return JsonResponse({"value": value},status=201)
+            return JsonResponse({"value": value, "message":None},status=201)
 
 
 @login_required
@@ -234,6 +242,7 @@ def faq(request):
     return render(request, "magicjourney/faq.html", {"faq": markdowner.convert(faq)})
 
 
+@login_required
 def book(request):
     user = User.objects.get(username=request.user.username)
     player = Player.objects.get(user=user)
@@ -242,3 +251,29 @@ def book(request):
 
     charms = [player.book.charm1.getlist(), player.book.charm2.getlist(), player.book.charm3.getlist()]
     return JsonResponse({"status": True, "charms": charms, "book_name": player.book.name})
+
+
+
+@login_required
+@csrf_exempt
+def learn_charm(request):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        charm_name = data["charm"]
+        user = User.objects.get(username=request.user.username)
+        player = Player.objects.get(user=user)
+        charm = Charm.objects.get(name=charm_name)
+        skill = charm.required_skill
+        if player in charm.players.all():
+            return JsonResponse({"status": False, "message":"You already know this charm"})
+        if player.training_actions <= 0:
+            return JsonResponse({"status": False, "message":"You spend all the time! It's time to go!"})
+        if skill != None and skill != '':
+            skill_value = getattr(player, skill)
+            if skill_value < charm.required_value:
+                return JsonResponse({"status": False, "message":f"Required skill ({skill}: {charm.required_value}) is too low"})
+
+        charm.players.add(player)
+        setattr(player, 'training_actions', (getattr(player, 'training_actions')-1))
+        player.save()
+        return JsonResponse({"status": True, "message":f"You have learned charm {charm_name}"})

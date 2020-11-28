@@ -17,6 +17,7 @@ urlpatterns = [
     path("buy_item", views.buy_item),
     path("unequip", views.unequip),
     path("faq", views.faq, name="faq"),
-    path("get_book", views.book)
+    path("get_book", views.book),
+    path("learn_charm", views.learn_charm),
 ]
 

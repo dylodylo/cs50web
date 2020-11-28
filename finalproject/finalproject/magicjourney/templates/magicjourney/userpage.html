@@ -52,4 +52,16 @@
     {% endfor %}
 </div>
 
+<h4>Known charms:</h4>
+<div id ="charms">
+    {% for charm in charms %}
+    <div class="charm">
+        <div class="tooltip">
+            {{ charm.name }}
+            <span class="tooltiptext">{{ charm.description }}</span>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
 {% endblock %}
