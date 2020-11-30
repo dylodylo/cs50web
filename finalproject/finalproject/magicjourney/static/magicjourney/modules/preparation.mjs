@@ -1,6 +1,7 @@
 import {house_toogle, subjects_toogle, blood_toogle, player_location, button, narrator, choices} from '../script.js'
 import {get_story, back_to_journey, update_story} from './story_status.mjs'
 import {update_skill} from './skills.mjs'
+import {start_expedition} from './story.mjs'
 
 function prepare_to_expedition()
 {
@@ -15,6 +16,7 @@ function prepare_to_expedition()
                         <button id="train-flying" onclick="train_skill(this)" data-skill="flying">Train flying</button>
                         <button id="learn-charm" onclick="get_book()">Learn charm from equiped book</button>`
     button.innerHTML = "Go to expedition!"
+    button.onclick = start_expedition
     
 }
 

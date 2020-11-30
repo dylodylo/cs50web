@@ -2,7 +2,7 @@ import {start_journey, choose_family, choose_subjects, choose_house, intro_story
 import {get_story, back_to_journey, update_story} from './modules/story_status.mjs'
 import {ollivanders, apothecary, bookstore, malkin, items_table, diagon_alley} from './modules/diagon_alley.mjs'
 import {buy_item, equip, unequip} from './modules/equipment.mjs'
-import {update_skill, house_skills, subjects_skills} from './modules/skills.mjs'
+import {update_skill, house_skills, subjects_skills, skills_points} from './modules/skills.mjs'
 import { train_skill, train, get_book, learn_charm} from './modules/preparation.mjs'
 
 export var button
@@ -22,6 +22,7 @@ window.train_skill = train_skill
 window.train = train
 window.get_book = get_book
 window.learn_charm = learn_charm
+window.skills_points = skills_points
 
 document.addEventListener('DOMContentLoaded', function() {
     button = document.querySelector('#start')

@@ -277,3 +277,16 @@ def learn_charm(request):
         setattr(player, 'training_actions', (getattr(player, 'training_actions')-1))
         player.save()
         return JsonResponse({"status": True, "message":f"You have learned charm {charm_name}"})
+
+@login_required
+@csrf_exempt
+def set_skill(request):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        skill_name = data["skill_name"]
+        skill_value = data["skill_value"]
+        user = User.objects.get(username=request.user.username)
+        player = Player.objects.get(user=user)
+        setattr(player, skill_name.replace("\\ ", "_"), skill_value)
+        player.save()
+        return JsonResponse({}, status=201)

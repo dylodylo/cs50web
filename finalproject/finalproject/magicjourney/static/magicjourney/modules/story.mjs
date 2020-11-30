@@ -89,4 +89,15 @@ function intro_story()
     console.log(button.innerHTML)
 }
 
-export {start_journey, choose_family, choose_subjects, choose_house, intro_story}
+function start_expedition(){
+    update_story(start_expedition.name)
+    narrator.style.display = 'block'
+    choices.style.display = 'none'
+    get_story(start_expedition.name, narrator)
+    button.innerHTML = "Something"
+    button.onclick = () => alert("Not implemented yet")
+}
+
+
+
+export {start_journey, choose_family, choose_subjects, choose_house, intro_story, start_expedition}

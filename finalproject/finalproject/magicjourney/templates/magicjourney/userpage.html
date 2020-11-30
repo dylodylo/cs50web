@@ -10,7 +10,17 @@
 
 <h4>Your skills:</h4>
 {% for field in fields %}
-    <p>{{ field.0|title }}: <span id="{{field.0}}-value">{{ field.1 }}</span></p>
+    <p class="skill" id="skill-{{field.0}}">{{ field.0|title }}: <span id="{{field.0}}-value">{{ field.1 }}</span>
+    {% if field.0|title == "Skills Points" and field.1 > 0 %}
+        <button id="skills_points_button" onclick="skills_points()">Spend skills points</button>
+    {% elif field.0 == "defence" or field.0 == "charms" or field.0 == "transfiguration" or field.0 == "potions" or field.0 == "charisma" %}
+        <span class="plus-minus" style="display: none;">
+            <button class="plus" id="plus-{{field.0}}" data-skill="{{field.0}}">+</button>
+            <button class="minus" id="minus-{{field.0}}" data-skill="{{field.0}}">-</button>
+        </span>              
+    {% endif %}
+
+    </p>
 {% endfor %}
     <p>Money: {{ player.money_in_galleons }}</p>
 <h4>Your wand:</h4>

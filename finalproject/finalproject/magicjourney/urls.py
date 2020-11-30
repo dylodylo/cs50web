@@ -19,5 +19,6 @@ urlpatterns = [
     path("faq", views.faq, name="faq"),
     path("get_book", views.book),
     path("learn_charm", views.learn_charm),
+    path("set_skill", views.set_skill),
 ]
 
