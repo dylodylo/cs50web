@@ -20,5 +20,6 @@ urlpatterns = [
     path("get_book", views.book),
     path("learn_charm", views.learn_charm),
     path("set_skill", views.set_skill),
+    path("get_creature", views.get_creature),
 ]
 

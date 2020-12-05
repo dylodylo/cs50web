@@ -94,8 +94,49 @@ function start_expedition(){
     narrator.style.display = 'block'
     choices.style.display = 'none'
     get_story(start_expedition.name, narrator)
-    button.innerHTML = "Something"
-    button.onclick = () => alert("Not implemented yet")
+    button.innerHTML = "Start fight!"
+    button.onclick = () => first_fight()
+}
+
+
+function first_fight(){
+    var url = new URL('http://127.0.0.1:8000/get_creature')
+    var params = {creature: "Hinkypunk"}
+    url.search = new URLSearchParams(params).toString()
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+        start_fight(data)
+    })
+    var hp = document.querySelector("#creature-hp-value").innerHTML
+
+}
+
+function start_fight(data){
+    var params = data.params
+    var xp = data.xp
+    var name = params["Name"]
+    var attack = params["Attack"]
+    var defence_t = params["Defence_t"]
+    var defence_c = params["Defence_c"]
+    var hp = params["HP"]
+
+    document.querySelector("#creature-hp-value").innerHTML = hp
+    document.querySelector("#creature-name-value").innerHTML = name
+    document.querySelector("#creature-attack-value").innerHTML = attack
+    document.querySelector("#creature-defence-charms-value").innerHTML = defence_c
+    document.querySelector("#creature-defence-trans-value").innerHTML = defence_t
+
+    document.querySelector("#creature").style.display = 'block'
+
+    console.log(hp)
+    narrator.style.display = 'block'
+    narrator.innerHTML = 'Choose action'
+    choices.style.display = `
+    <button>Simple attack</button>
+    <button>Try transfigure</button>
+    <button>Select charm</button>
+    `
 }
 
 

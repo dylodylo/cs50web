@@ -153,3 +153,24 @@ class Book(models.Model):
     def save(self, *args, **kwargs):
         self.price = self.price_in_galleons()
         super(Book, self).save(*args, **kwargs)
+
+
+class Creature(models.Model):
+    name = models.CharField(max_length=40)
+    hp = models.IntegerField(default=0)
+    xp = models.IntegerField(default=0)
+    attack = models.IntegerField(default=0)
+    d_trans = models.IntegerField(default=0)
+    d_charms = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.name}"
+
+    def get_params(self):
+        return {
+            "Name": self.name,
+            "HP": self.hp,
+            "Attack": self.attack,
+            "Defence_t": self.d_trans,
+            "Defence_c": self.d_charms
+        }

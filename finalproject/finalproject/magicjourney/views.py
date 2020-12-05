@@ -10,7 +10,7 @@ from .utils import get_all_fields, check_level, get_serialized_fields, get_equip
 import json
 from django.apps import apps
 from markdown2 import Markdown
-from .models import User, Player, Wand, Robe, Book, Charm
+from .models import User, Player, Wand, Robe, Book, Charm, Creature
 # Create your views here.
 
 
@@ -290,3 +290,9 @@ def set_skill(request):
         setattr(player, skill_name.replace("\\ ", "_"), skill_value)
         player.save()
         return JsonResponse({}, status=201)
+
+@login_required
+def get_creature(request):
+    creature_name = request.GET.get("creature")
+    creature = Creature.objects.get(name=creature_name)
+    return JsonResponse({"params": creature.get_params(), "xp": creature.xp}, status=201)
