@@ -106,15 +106,17 @@ function first_fight(){
     fetch(url)
     .then(response => response.json())
     .then(data => {
-        start_fight(data)
+        var params = data.params
+        var xp = data.xp
+        start_fight(params, xp)
     })
     var hp = document.querySelector("#creature-hp-value").innerHTML
 
 }
 
-function start_fight(data){
-    var params = data.params
-    var xp = data.xp
+function start_fight(params, xp){
+    var params = params
+    var xp = xp
     var name = params["Name"]
     var attack = params["Attack"]
     var defence_t = params["Defence_t"]
@@ -129,16 +131,31 @@ function start_fight(data){
 
     document.querySelector("#creature").style.display = 'block'
 
-    console.log(hp)
+    var player_hp = document.querySelector("#hp-value").innerHTML
+    var player_defence = document.querySelector("#defence-value").innerHTML
+    var player_charms = document.querySelector("#charms-value").innerHTML
+    var player_transfiguration = document.querySelector("#transfiguration-value").innerHTML
+
     narrator.style.display = 'block'
     narrator.innerHTML = 'Choose action'
-    choices.style.display = `
-    <button>Simple attack</button>
-    <button>Try transfigure</button>
-    <button>Select charm</button>
+    choices.innerHTML = `
+    <button onclick="battle('attack', ${player_charms}, ${defence_c})">Simple attack</button>
+    <button onclick="battle('transfiguration', ${player_transfiguration})">Try transfigure</button>
     `
+    choices.style.display = 'block'
+
+}
+
+
+function battle(action, value, defence){
+    alert("FIGHT")
+    if (action === "attack"){
+        if (value > defence){
+            alert("GOOD ATTACK")
+        }
+    }
 }
 
 
 
-export {start_journey, choose_family, choose_subjects, choose_house, intro_story, start_expedition}
+export {start_journey, choose_family, choose_subjects, choose_house, intro_story, start_expedition, battle}
