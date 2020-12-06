@@ -148,14 +148,45 @@ function start_fight(params, xp){
 
 
 function battle(action, value, defence){
-    alert("FIGHT")
     if (action === "attack"){
         if (value > defence){
-            alert("GOOD ATTACK")
+            var attack_strength = value-defence
+            var hp = document.querySelector("#creature-hp-value").innerHTML
+            hp -= attack_strength
+            if (hp<=0) {
+                alert(`You attack with ${attack_strength} power. You kill the beast`)
+                after_first_fight()
+            }
+            else {
+                var attack = document.querySelector("#creature-attack-value").innerHTML
+                var player_defence = document.querySelector("#defence-value").innerHTML
+                var player_hp = document.querySelector("#hp-value").innerHTML
+                if (attack>player_defence){
+                    var creature_attack_value = attack-player_defence
+                    player_hp -= creature_attack_value
+                    if(player_hp<=0){
+                        game_over
+                    }
+                }
+                else {
+                    var creature_attack_value = 0
+                }
+                alert(`You attack with ${attack_strength} power. Beast has ${hp} hp left. Beast attack with ${creature_attack_value} power. You have ${player_hp} left`)
+                document.querySelector("#hp-value").innerHTML = player_hp
+                document.querySelector("#creature-hp-value").innerHTML = hp
+                start_fight
+            
+            }
         }
     }
 }
 
+function game_over(){
+    alert("You're dead!")
+}
 
+function after_first_fight(){
+    narrator.innerHTML = "You defeated beast"
+}
 
 export {start_journey, choose_family, choose_subjects, choose_house, intro_story, start_expedition, battle}
