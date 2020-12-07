@@ -5,3 +5,5 @@
 ## 2. How money works?
 
 ## 3. How improve skills?
+
+## 4. How battle works?
