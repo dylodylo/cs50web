@@ -1,5 +1,4 @@
 async function update_skill(skills) {
-    console.log(skills[1])
     await fetch('/update_skill', {
             method: "PUT",
             body: JSON.stringify({

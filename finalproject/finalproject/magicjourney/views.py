@@ -104,7 +104,6 @@ def update_skill(request):
         data = json.loads(request.body)
         skill = data['skill']
         value = data['value']
-        print("start function",skill,value)
         user = User.objects.get(username=request.user.username)
         player = Player.objects.get(user=user)
         if isinstance(value, int):
@@ -115,7 +114,6 @@ def update_skill(request):
                 player.save()
             field = player._meta.get_field(skill)
             new_value = change_skill(player, skill, value)
-            print("Hello from the other side")
             if skill == 'xp':
                 check_level(player, value)
 
