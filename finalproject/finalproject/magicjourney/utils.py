@@ -32,7 +32,7 @@ def get_serialized_fields(object):
 
 
 def get_equipment(player):
-    no_models = ["User", "Player", "Charm"]
+    no_models = ["User", "Player", "Charm", "Creature"]
     equipment = {}
     models = apps.get_app_config('magicjourney').get_models()
     for model in models:

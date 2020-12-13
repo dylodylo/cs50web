@@ -294,3 +294,18 @@ def get_creature(request):
     creature_name = request.GET.get("creature")
     creature = Creature.objects.get(name=creature_name)
     return JsonResponse({"params": creature.get_params(), "xp": creature.xp}, status=201)
+
+@login_required
+@csrf_exempt
+def check_spell(request):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        spell_name = data['spell']
+        user = User.objects.get(username=request.user.username)
+        player = Player.objects.get(user=user)
+        spell = Charm.objects.get(name=spell_name)
+        if player in spell.players.all():
+            print("True")
+            return JsonResponse({"known": True}, status=201)
+        else:
+            return JsonResponse({"known": False}, status=201)

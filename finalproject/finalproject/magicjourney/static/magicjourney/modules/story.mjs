@@ -262,10 +262,48 @@ function game_over(){
 function cave(){
     update_story(cave.name)
     narrator.style.display = 'block'
-    choices.style.display = 'none'
+    choices.style.display = 'block'
     document.querySelector("#creature").style.display = 'none'
     get_story(cave.name, narrator)
-    button.innerHTML = "Not implemented yet"
+
+    choices.innerHTML =`<button onclick="alohomora()">Use Alohomora</button>
+                        <button onclick="bombarda()">Use Bombarda</button>
+                        <button onclick="other_way()">Find other way</button>`
+    button.style.display = 'none'
 }
 
-export {start_journey, choose_family, choose_subjects, choose_house, intro_story, start_expedition, battle, cave}
+async function check_spell(spell){
+    await fetch('/check_spell',{
+        method: "PUT",
+        body: JSON.stringify({
+            spell: spell
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        var known = data.known
+        console.log(known)
+        return true
+    })
+}
+
+async function alohomora(){
+    var known = await check_spell("Alohomora")
+    console.log(known)
+    if (known == true){
+        console.log("True")
+        alert("You don't know this spell!")
+        cave()
+    }
+    else if (known == false){
+        console.log("False")
+        choices.style.display = 'none'
+        narrator.innerHTML = "You open doors with Alohomora. You go on."
+        button.style.display = 'block'
+        button.innerHTML = "Go on!"
+    }
+}
+
+
+
+export {start_journey, choose_family, choose_subjects, choose_house, intro_story, start_expedition, battle, cave, alohomora, game_over}
