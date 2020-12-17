@@ -1,4 +1,4 @@
-import {start_journey, choose_family, choose_subjects, choose_house, intro_story, battle, cave, alohomora} from './modules/story.mjs'
+import {start_journey, choose_family, choose_subjects, choose_house, intro_story, battle, cave, alohomora, bombarda, another_way} from './modules/story.mjs'
 import {get_story, back_to_journey, update_story} from './modules/story_status.mjs'
 import {ollivanders, apothecary, bookstore, malkin, items_table, diagon_alley} from './modules/diagon_alley.mjs'
 import {buy_item, equip, unequip} from './modules/equipment.mjs'
@@ -26,6 +26,8 @@ window.skills_points = skills_points
 window.battle = battle
 window.cave = cave
 window.alohomora = alohomora
+window.bombarda = bombarda
+window.another_way = another_way
 
 document.addEventListener('DOMContentLoaded', function() {
     button = document.querySelector('#start')

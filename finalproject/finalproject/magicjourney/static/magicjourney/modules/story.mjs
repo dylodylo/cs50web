@@ -268,12 +268,12 @@ function cave(){
 
     choices.innerHTML =`<button onclick="alohomora()">Use Alohomora</button>
                         <button onclick="bombarda()">Use Bombarda</button>
-                        <button onclick="other_way()">Find other way</button>`
+                        <button onclick="another_way()">Find another way</button>`
     button.style.display = 'none'
 }
 
-async function check_spell(spell){
-    await fetch('/check_spell',{
+function check_spell(spell, callback){
+    fetch('/check_spell',{
         method: "PUT",
         body: JSON.stringify({
             spell: spell
@@ -282,28 +282,70 @@ async function check_spell(spell){
     .then(response => response.json())
     .then(data => {
         var known = data.known
-        console.log(known)
-        return true
+        callback(known)
     })
 }
 
-async function alohomora(){
-    var known = await check_spell("Alohomora")
-    console.log(known)
-    if (known == true){
-        console.log("True")
-        alert("You don't know this spell!")
-        cave()
+function alohomora(){
+    check_spell("Alohomora", function(known){
+        if (known == false){
+            alert("You don't know this spell!")
+            cave()
+        }
+        else if (known == true){
+            choices.style.display = 'none'
+            narrator.innerHTML = "You open doors with Alohomora. You go on."
+            button.style.display = 'block'
+            button.innerHTML = "Go on!"
+            button.onclick = () => deep_in_cave()
+        }
+    })
+
+}
+
+function bombarda(){
+    check_spell("Bombarda", function(known){
+        if (known == false){
+            alert("You don't know this spell!")
+            cave()
+        }
+        else if (known == true){
+            choices.style.display = 'none'
+            narrator.innerHTML = "BOOOOM! Echo multiplies sound of explosion."
+            button.style.display = 'block'
+            button.innerHTML = "Go on!"
+            button.onclick = () => deep_in_cave()
+        }
+    })
+}
+
+function another_way(){
+    choices.style.display = 'none'
+    narrator.innerHTML = "You found narrow passage on your right. You take depth breath and start slowly squeeze through. Suddenly your foot find nothing but abyss. You fall down and lost 5 HP..."
+    button.innerHTML = "AAAAAAA!"
+    button.style.display = 'block'
+    button.onclick = () => {
+        var lost_hp = -5
+        update_skill(["hp", lost_hp])
+        var player_hp = document.querySelector("#hp-value").innerHTML + lost_hp
+        console.log(player_hp)
+        if (player_hp > 0){
+            button.innerHTML = "... But it looks that you find new corridor!"
+            button.onclick = () => deep_in_cave()
+        }
+        else {
+            game_over()
+        }
     }
-    else if (known == false){
-        console.log("False")
-        choices.style.display = 'none'
-        narrator.innerHTML = "You open doors with Alohomora. You go on."
-        button.style.display = 'block'
-        button.innerHTML = "Go on!"
-    }
+
+
+    
+}
+
+function deep_in_cave(){
+    narrator.innerHTML = "You find salamander"
+    button.innerHTML = "Fight"
 }
 
 
-
-export {start_journey, choose_family, choose_subjects, choose_house, intro_story, start_expedition, battle, cave, alohomora, game_over}
+export {start_journey, choose_family, choose_subjects, choose_house, intro_story, start_expedition, battle, cave, alohomora, game_over, bombarda, another_way}
