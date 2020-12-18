@@ -1,5 +1,5 @@
 import {card, button} from '../script.js'
-import {start_journey, choose_family, choose_subjects, choose_house, intro_story, start_expedition, game_over, cave} from './story.mjs'
+import {start_journey, choose_family, choose_subjects, choose_house, intro_story, start_expedition, game_over, cave, deep_in_cave, end_game} from './story.mjs'
 import {prepare_to_expedition} from './preparation.mjs'
 import {diagon_alley} from './diagon_alley.mjs'
 

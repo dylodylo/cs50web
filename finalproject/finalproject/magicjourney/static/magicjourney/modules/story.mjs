@@ -123,6 +123,7 @@ function start_fight(params, xp){
         document.querySelector("#creature-hp-value").innerHTML = params["HP"]
         var player_hp = document.querySelector("#hp-value").innerHTML
         var defence_t = params["Defence_t"]
+        localStorage.setItem("hp-value", player_hp)
         localStorage.setItem("creature-defence", defence_t)
         localStorage.setItem("creature-hp", params["HP"])
         document.querySelector("#creature-defence-trans-value").innerHTML = defence_t
@@ -240,7 +241,7 @@ function battle(action, value, defence){
             game_over()
         }
         else if (defence>0){
-            alert(`You attack with ${attack_strength} power. Beast has ${defence} hp left. Beast attack with ${creature_attack_value} power. You have ${player_hp} left`)
+            alert(`You attack with ${attack_strength} power. Beast has ${defence} defence left. Beast attack with ${creature_attack_value} power. You have ${player_hp} left`)
             document.querySelector("#hp-value").innerHTML = player_hp
             document.querySelector("#creature-defence-trans-value").innerHTML = defence
             start_fight
@@ -250,6 +251,7 @@ function battle(action, value, defence){
 
 
 function game_over(){
+    localStorage.clear()
     alert("You're dead!")
     update_story(game_over.name)
     narrator.style.display = 'block'
@@ -260,6 +262,7 @@ function game_over(){
 }
 
 function cave(){
+    localStorage.clear()
     update_story(cave.name)
     narrator.style.display = 'block'
     choices.style.display = 'block'
@@ -327,7 +330,7 @@ function another_way(){
     button.onclick = () => {
         var lost_hp = -5
         update_skill(["hp", lost_hp])
-        var player_hp = document.querySelector("#hp-value").innerHTML + lost_hp
+        var player_hp = parseInt(document.querySelector("#hp-value").innerHTML) + lost_hp
         console.log(player_hp)
         if (player_hp > 0){
             button.innerHTML = "... But it looks that you find new corridor!"
@@ -336,16 +339,191 @@ function another_way(){
         else {
             game_over()
         }
-    }
-
-
-    
+    }    
 }
 
 function deep_in_cave(){
-    narrator.innerHTML = "You find salamander"
+    update_story(deep_in_cave.name)
+    narrator.style.display = 'block'
+    get_story(deep_in_cave.name, narrator)
     button.innerHTML = "Fight"
+    button.onclick = second_fight
 }
 
 
-export {start_journey, choose_family, choose_subjects, choose_house, intro_story, start_expedition, battle, cave, alohomora, game_over, bombarda, another_way}
+function second_fight(){
+    var url = new URL('http://127.0.0.1:8000/get_creature')
+    var params = {creature: "Salamander"}
+    url.search = new URLSearchParams(params).toString()
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+        var params = data.params
+        var xp = data.xp
+        start_second_fight(params, xp)
+    })
+}
+
+function start_second_fight(params, xp){
+    console.log(params)
+    if (localStorage.getItem('fightStarted') === null){
+        localStorage.setItem('fightStarted', true)
+        localStorage.setItem("sum-of-attacks", 0)
+        document.querySelector("#creature-hp-value").innerHTML = params["HP"]
+        var player_hp = document.querySelector("#hp-value").innerHTML
+        var defence_t = params["Defence_t"]
+        var defence_c = params["Defence_c"]
+        localStorage.setItem("player-hp", player_hp)
+        localStorage.setItem("creature-defence", defence_t)
+        localStorage.setItem("creature-hp", params["HP"])
+        localStorage.setItem("creature-defence-c", defence_c)
+        document.querySelector("#creature-defence-charms-value").innerHTML = defence_c
+        document.querySelector("#creature-defence-trans-value").innerHTML = defence_t
+    }
+
+    else {
+        var player_hp = localStorage.getItem('player-hp')
+        document.querySelector("#hp-value").innerHTML = player_hp
+        document.querySelector("#creature-hp-value").innerHTML = localStorage.getItem('creature-hp')
+        var defence_t = localStorage.getItem('creature-defence')
+        var defence_c = localStorage.getItem('creature-defence-c')
+        document.querySelector("#creature-defence-trans-value").innerHTML = defence_t
+        document.querySelector("#creature-defence-charms-value").innerHTML = defence_c
+    }
+    var params = params
+    var xp = xp
+    var name = params["Name"]
+    var attack = params["Attack"]
+
+
+    document.querySelector("#creature-name-value").innerHTML = name
+    document.querySelector("#creature-attack-value").innerHTML = attack
+    
+
+
+    document.querySelector("#creature").style.display = 'block'
+
+
+    var player_defence = document.querySelector("#defence-value").innerHTML
+    var player_charms = document.querySelector("#charms-value").innerHTML
+    var player_transfiguration = document.querySelector("#transfiguration-value").innerHTML
+
+
+    narrator.style.display = 'block'
+    narrator.innerHTML = 'Choose action'
+    choices.innerHTML = `
+    <button onclick="second_battle('attack', ${player_charms}, ${defence_c})">Simple attack</button>
+    <button onclick="second_battle('transfiguration', ${player_transfiguration}, ${defence_t})">Try transfigure</button>
+    <button onclick="aguamenti()">Cast Aguamenti</button>
+    `
+    choices.style.display = 'block'
+}
+
+function second_battle(action, value, defence){
+    var player_hp = parseInt(document.querySelector("#hp-value").innerHTML)
+    var hp = parseInt(document.querySelector("#creature-hp-value").innerHTML)
+    if (action === "attack"){
+        if (value > defence){
+            var attack_strength = value-defence
+            hp -= attack_strength
+            localStorage.setItem('creature-hp', hp)
+            if (hp<=0) {
+                alert(`You attack with ${attack_strength} power. You kill the beast`)
+                update_skill(["hp", -localStorage.getItem("sum-of-attacks")])
+                end_game()
+            }
+        }
+        else {
+            var attack_strength = 0
+        }
+        var attack = parseInt(document.querySelector("#creature-attack-value").innerHTML)
+        var player_defence = parseInt(document.querySelector("#defence-value").innerHTML)
+        console.log(attack, player_defence)   
+        if (attack>player_defence){
+            var creature_attack_value = attack-player_defence
+            player_hp -= creature_attack_value
+            var sum_of_attacks = parseInt(localStorage.getItem("sum-of-attacks")) + creature_attack_value
+            localStorage.setItem("sum-of-attacks", sum_of_attacks)
+            localStorage.setItem('player-hp', player_hp)
+        }
+        else {
+            var creature_attack_value = 0
+        }
+        if(player_hp<=0){
+            update_skill(["hp", -localStorage.getItem("sum-of-attacks")])
+            game_over()
+        }
+        else if (hp>0){
+            alert(`You attack with ${attack_strength} power. Beast has ${hp} hp left. Beast attack with ${creature_attack_value} power. You have ${player_hp} left`)
+            document.querySelector("#hp-value").innerHTML = player_hp
+            document.querySelector("#creature-hp-value").innerHTML = hp
+            start_second_fight
+        }
+    }         
+    else if (action == "transfiguration"){
+        defence = parseInt(localStorage.getItem("creature-defence"))
+        if (value>defence){
+            var attack_strength = value-defence
+            defence -= attack_strength
+            localStorage.setItem("creature-defence", defence)
+            if (defence < 0){
+                alert("You tranfigure creature into stone.")
+                update_skill(["hp", -localStorage.getItem("sum-of-attacks")])
+                end_game()
+            }
+        }
+        else {
+            var attack_strength = 0
+        }
+        var attack = parseInt(document.querySelector("#creature-attack-value").innerHTML)
+        var player_defence = parseInt(document.querySelector("#defence-value").innerHTML)
+        if (attack>player_defence){
+            var creature_attack_value = attack-player_defence
+            player_hp -= creature_attack_value
+            var sum_of_attacks = parseInt(localStorage.getItem("sum-of-attacks")) + creature_attack_value
+            localStorage.setItem("sum-of-attacks", sum_of_attacks)
+            localStorage.setItem('player-hp', player_hp)
+        }
+        else {
+            var creature_attack_value = 0
+        }
+        if(player_hp<=0){
+            console.log(player_hp)
+            update_skill(["hp", -localStorage.getItem("sum-of-attacks")])
+            game_over()
+        }
+        else if (defence>0){
+            alert(`You attack with ${attack_strength} power. Beast has ${defence} defence left. Beast attack with ${creature_attack_value} power. You have ${player_hp} left`)
+            document.querySelector("#hp-value").innerHTML = player_hp
+            document.querySelector("#creature-defence-trans-value").innerHTML = defence
+            start_second_fight
+        }
+}
+}
+
+function aguamenti(params, xp){
+    check_spell("Alohomora", function(known){
+        if (known == false){
+            alert("You don't know this spell!")
+            start_second_fight()
+        }
+        else if (known == true){
+            localStorage.setItem('creature-defence', 0)
+            localStorage.setItem('creature-defence-c', 0)
+            alert("You use Agauamenti to extinguish salamander. It lose some defence.")
+            start_second_fight()
+        }
+    })
+}
+
+function end_game(){
+    localStorage.clear()
+    update_story(end_game.name)
+    get_story(end_game.name, narrator)
+    narrator.style.display = 'block'
+    choices.style.display = 'none'
+    button.style.display = 'none'
+    document.querySelector("#creature").style.display = 'none'
+}
+
+export {start_journey, choose_family, choose_subjects, choose_house, intro_story, start_expedition, battle, cave, alohomora, game_over, bombarda, another_way, deep_in_cave, second_battle, end_game, aguamenti}

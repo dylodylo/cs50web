@@ -1,0 +1,5 @@
+You defeat salamander. In next chamber you found chest of gold.<br/>
+
+Congrats, you end a game! <br/>
+
+If you want to play again please restart your character.
