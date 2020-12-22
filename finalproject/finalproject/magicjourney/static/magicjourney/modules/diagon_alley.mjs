@@ -75,7 +75,7 @@ function items_table(model_name, ){
 function diagon_alley(){
     update_story(diagon_alley.name)
     button.innerHTML = "Prepare to expedition"
-    document.querySelector('#items-table').style.display = 'none'
+    document.querySelector('#table').style.display = 'none'
     console.log(button.innerHTML)
     //button.onclick = () => alert("Function not implemented yet!")
     button.onclick = prepare_to_expedition

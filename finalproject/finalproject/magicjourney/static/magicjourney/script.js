@@ -38,7 +38,10 @@ document.addEventListener('DOMContentLoaded', function() {
     choices = document.querySelector('#choices')
     player_location = document.querySelector('#location')
     add_toogle_start()
-
+    var restart_button = document.querySelector('#restart-button')
+    if (restart_button) {
+        restart_button.onclick = restart_character
+    }
 })
 
 function add_toogle_start()
@@ -85,6 +88,22 @@ function house_toogle()
 
     house_skills(house)
     intro_story()
+}
+
+function restart_character(){
+    if (confirm("This option will delete all your progress. Click OK if you still want restart your character")){
+        localStorage.clear()
+        fetch("/delete_player")
+        .then(response => response.json())
+        .then(() => {
+            window.location.replace("http://127.0.0.1:8000");
+            window.location.reload(true)
+            return
+        })
+    }
+    else{
+        return
+    }
 }
 
 export {house_toogle, subjects_toogle, blood_toogle}

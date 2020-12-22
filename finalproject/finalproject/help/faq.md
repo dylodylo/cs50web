@@ -7,3 +7,5 @@
 ## 3. How improve skills?
 
 ## 4. How battle works?
+
+## 5. How reach higher level?

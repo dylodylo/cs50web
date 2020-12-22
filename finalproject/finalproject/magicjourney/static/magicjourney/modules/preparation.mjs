@@ -5,6 +5,7 @@ import {start_expedition} from './story.mjs'
 
 function prepare_to_expedition()
 {
+    player_location.innerHTML = "Home"
     var table = document.querySelector("#table")
     table.style.display = 'none'
     update_story(prepare_to_expedition.name)

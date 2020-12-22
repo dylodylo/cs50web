@@ -18,11 +18,12 @@ def get_all_fields(object):
     return fields_values
 
 
-def check_level(player, value):
-    if player.level*100 <= player.xp + value:
-        player.level += 1
-        player.skills_points += player.level
-        player.hp += 10
+def check_level(player):
+    while player.level*100 <= player.xp:
+        setattr(player,'level',player.level+1)
+        setattr(player,'skills_points', player.skills_points + player.level + 1)
+        setattr(player,'hp', player.hp + 10)
+        player.save()
 
 def get_serialized_fields(object):
     no_fields = ["player", "players", 'price_knuts']

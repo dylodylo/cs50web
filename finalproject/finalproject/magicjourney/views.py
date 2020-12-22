@@ -115,12 +115,10 @@ def update_skill(request):
             field = player._meta.get_field(skill)
             new_value = change_skill(player, skill, value)
             if skill == 'xp':
-                check_level(player, value)
-
+                check_level(player)
             return JsonResponse({"value": new_value, "message": None},status=201)
 
         else:
-            print(skill,value)
             setattr(player,skill,value)
             player.save()
             return JsonResponse({"value": value, "message":None},status=201)
@@ -309,3 +307,11 @@ def check_spell(request):
             return JsonResponse({"known": True}, status=201)
         else:
             return JsonResponse({"known": False}, status=201)
+
+@login_required
+@csrf_exempt
+def delete_player(request):
+    user = User.objects.get(username=request.user.username)
+    player = Player.objects.get(user=user)
+    player.delete()
+    return JsonResponse({}, status=201)

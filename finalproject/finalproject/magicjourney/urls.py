@@ -22,5 +22,6 @@ urlpatterns = [
     path("set_skill", views.set_skill),
     path("get_creature", views.get_creature),
     path("check_spell", views.check_spell),
+    path("delete_player", views.delete_player),
 ]
 
