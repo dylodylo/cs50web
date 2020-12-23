@@ -18,7 +18,7 @@ class Player(models.Model):
         ("Slytherin", "Slytherin")
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    story_status = models.CharField(default="choose_family", max_length=50)
+    story_status = models.CharField(default="start", max_length=50)
     skills_points = models.IntegerField(default=5)
     xp = models.IntegerField(default = 0)
     level = models.IntegerField(default=1)

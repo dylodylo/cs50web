@@ -20,9 +20,16 @@ def index(request):
         user = User.objects.get(username=request.user.username)
         player = Player.objects.get(user=user)
         fields_values = get_all_fields(player)
+        button_value = "Return to journey!"
     except:
         player = None
-    return render(request, "magicjourney/index.html", {"player": player, "fields": fields_values})
+        button_value = "Start your journey!"
+    msg = ""
+    if (player != None):
+        if player.story_status == "choose_family":
+            msg = "Your character was created! Click 'Return to journey' to play!"
+    
+    return render(request, "magicjourney/index.html", {"player": player, "fields": fields_values, "button": button_value, "msg": msg})
 
 
 def register(request):

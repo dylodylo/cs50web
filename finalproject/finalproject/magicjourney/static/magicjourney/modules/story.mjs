@@ -1,4 +1,4 @@
-import {house_toogle, subjects_toogle, blood_toogle, player_location, button, narrator, choices} from '../script.js'
+import {initialize, house_toogle, subjects_toogle, blood_toogle, player_location, button, narrator, choices} from '../script.js'
 import {get_story, back_to_journey, update_story} from './story_status.mjs'
 import {diagon_alley} from './diagon_alley.mjs'
 import {update_skill} from './skills.mjs'
@@ -15,17 +15,25 @@ function start_journey(button, narrator, card) {
             back_to_journey()
         }
         else{
+            location.reload()
+            console.log(narrator)
+            if (narrator === undefined) {
+                narrator = document.querySelector('#narrator')
+                card = document.querySelector('.player-card')
+                button = document.querySelector('#start')
+            }
+            
             narrator.innerHTML = "This is start of great journey!"
             narrator.style.display = 'block'
             card.style.display = 'block'
-            button.innerHTML = "Continue"
-            button.onclick = choose_family
+            button.onclick = choose_family()
         }
     })
 }
 
 
 function choose_family() {
+    document.querySelector("#msg").style.display = 'none'
     update_story(choose_family.name)
     player_location.innerHTML = "Home"
     get_story(choose_family.name, narrator)
@@ -231,4 +239,4 @@ function end_game(){
     document.querySelector("#creature").style.display = 'none'
 }
 
-export {start_journey, choose_family, choose_subjects, choose_house, intro_story, start_expedition, battle, cave, alohomora, game_over, bombarda, another_way, deep_in_cave, second_battle, end_game, aguamenti}
+export {start_journey, choose_family, choose_subjects, choose_house, intro_story, start_expedition, battle, cave, alohomora, game_over, bombarda, another_way, deep_in_cave, end_game, aguamenti}

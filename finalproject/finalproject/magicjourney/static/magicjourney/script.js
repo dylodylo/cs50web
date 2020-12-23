@@ -1,4 +1,4 @@
-import {start_journey, choose_family, choose_subjects, choose_house, intro_story, battle, cave, alohomora, bombarda, another_way, second_battle, aguamenti} from './modules/story.mjs'
+import {start_journey, choose_family, choose_subjects, choose_house, intro_story, battle, cave, alohomora, bombarda, another_way, aguamenti} from './modules/story.mjs'
 import {get_story, back_to_journey, update_story} from './modules/story_status.mjs'
 import {ollivanders, apothecary, bookstore, malkin, items_table, diagon_alley} from './modules/diagon_alley.mjs'
 import {buy_item, equip, unequip} from './modules/equipment.mjs'
@@ -28,26 +28,29 @@ window.cave = cave
 window.alohomora = alohomora
 window.bombarda = bombarda
 window.another_way = another_way
-window.second_battle = second_battle
 window.aguamenti = aguamenti
 
 document.addEventListener('DOMContentLoaded', function() {
+    initialize()
+})
+
+function initialize(){
     button = document.querySelector('#start')
     narrator = document.querySelector('#narrator')
     card = document.querySelector('.player-card')
     choices = document.querySelector('#choices')
     player_location = document.querySelector('#location')
-    add_toogle_start()
     var restart_button = document.querySelector('#restart-button')
     if (restart_button) {
         restart_button.onclick = restart_character
     }
-})
+    add_toogle_start()
+}
 
 function add_toogle_start()
 {
     if (button){
-        button.onclick = start_journey
+        button.onclick = () => start_journey()
     } 
 }
 
@@ -97,13 +100,10 @@ function restart_character(){
         .then(response => response.json())
         .then(() => {
             window.location.replace("http://127.0.0.1:8000");
-            window.location.reload(true)
-            return
+            console.log("Hello")
+            initialize()
         })
-    }
-    else{
-        return
     }
 }
 
-export {house_toogle, subjects_toogle, blood_toogle}
+export {house_toogle, subjects_toogle, blood_toogle, initialize}
