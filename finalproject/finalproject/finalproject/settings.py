@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import environ
+import os
+from dotenv import load_dotenv
 
 #Environ
 root = environ.Path(__file__) - 3
@@ -130,3 +132,12 @@ STATIC_URL = '/static/'
 # Models
 
 AUTH_USER_MODEL = 'magicjourney.User'
+
+#EMAIL
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = 587
+PASSWORD_RESET_TIMEOUT_DAYS = 2
