@@ -59,7 +59,7 @@ function blood_toogle()
     var blood_choice = document.querySelector('#family')
     var blood = blood_choice.value
     update_skill(['blood', blood])
-    choose_subjects()
+    choose_house()
 }
 
 
@@ -80,7 +80,7 @@ function subjects_toogle()
 
     else {
         subjects_skills(checked_subjects)
-        choose_house()
+        intro_story()
     }  
 }
 
@@ -90,7 +90,7 @@ function house_toogle()
     var house = house_choice.value
 
     house_skills(house)
-    intro_story()
+    choose_subjects()
 }
 
 function restart_character(){
