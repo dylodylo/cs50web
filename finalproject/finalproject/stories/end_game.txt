@@ -1,4 +1,6 @@
-You defeat salamander. In next chamber you found chest of gold.<br/>
+You defeat Fire Salamander. In next chamber you found chest. You open it with joy, but inside was only small piece of paper. <br/>
+
+<i> The journey is the reward. </i> </br>
 
 Congrats, you end a game! <br/>
 

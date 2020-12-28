@@ -17,7 +17,8 @@ async function buy_item(button){
             var money = data.money
             var story = data.story
             document.querySelector("#money").innerHTML = money
-            narrator.innerHTML = story
+            //narrator.innerHTML = story
+            alert(message)
         }
         
         else {

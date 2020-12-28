@@ -30,7 +30,7 @@ class Player(models.Model):
     transfiguration = models.IntegerField(default=0)
     potions = models.IntegerField(default=0)
     charisma = models.IntegerField(default=0)
-    money = models.IntegerField(default=0) #in knuts
+    money = models.IntegerField(default=1000) #in knuts
     wand = models.ForeignKey('Wand', on_delete=models.CASCADE, blank=True, null=True, default=None, verbose_name="wand")
     robe = models.ForeignKey('Robe', on_delete=models.CASCADE, blank=True, null=True, default=None, verbose_name="robe")
     book = models.ForeignKey('Book', on_delete=models.CASCADE, blank=True, null=True, default=None, verbose_name="book")

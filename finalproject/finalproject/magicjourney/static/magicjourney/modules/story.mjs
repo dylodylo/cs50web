@@ -94,14 +94,14 @@ function intro_story()
     narrator.style.display = 'block'
     choices.style.display = 'none'
     get_story(intro_story.name, narrator)
-    update_skill(["money", 1000])
+    document.querySelector("#money").innerHTML = "2 g 0 s 14 k"
     button.innerHTML = "Go to Diagon Alley"
     button.onclick = diagon_alley
     console.log(button.innerHTML)
 }
 
 function start_expedition(){
-    player_location.innerHTML = "Forrest in North Scotland"
+    player_location.innerHTML = "Forrest in northern Scotland"
     update_story(start_expedition.name)
     narrator.style.display = 'block'
     choices.style.display = 'none'
@@ -159,7 +159,7 @@ function alohomora(){
         }
         else if (known == true){
             choices.style.display = 'none'
-            narrator.innerHTML = "You open doors with Alohomora. You go on."
+            narrator.innerHTML = "You open doors with Alohomora. You could go on."
             button.style.display = 'block'
             button.innerHTML = "Go on!"
             button.onclick = () => deep_in_cave()
@@ -176,7 +176,7 @@ function bombarda(){
         }
         else if (known == true){
             choices.style.display = 'none'
-            narrator.innerHTML = "BOOOOM! Echo multiplies sound of explosion."
+            narrator.innerHTML = "BOOOOM! Echo multiplies sound of explosion. But doors shattered to pieces and you now could go on."
             button.style.display = 'block'
             button.innerHTML = "Go on!"
             button.onclick = () => deep_in_cave()

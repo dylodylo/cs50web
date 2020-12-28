@@ -55,7 +55,7 @@ function start_fight(params, xp, spells_list, after_fight)
 
 
     narrator.style.display = 'block'
-    narrator.innerHTML = 'Choose action'
+    narrator.innerHTML = ''
     choices.style.display = 'none'
     button.style.display = 'none'
 
@@ -65,7 +65,7 @@ function start_fight(params, xp, spells_list, after_fight)
     var spells = document.querySelector("#spells")
     spells_list.forEach(spell => {
         var new_spell = document.createElement("button")
-        var spell_capitalized = spell.charAt(0).toUpperCase() + name.slice(1)
+        var spell_capitalized = spell.charAt(0).toUpperCase() + spell.slice(1)
         new_spell.innerHTML = `Cast ${spell_capitalized}`
         new_spell.onclick = window[spell]
         spells.appendChild(new_spell)

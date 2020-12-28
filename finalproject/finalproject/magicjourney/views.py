@@ -57,7 +57,6 @@ def userpage(request, username):
     user = User.objects.get(username=username)
     player = Player.objects.get(user=user)
     equipment = get_equipment(player)
-    print(equipment)
     fields_values = []
     #try:
     fields_values = get_all_fields(player)
@@ -113,6 +112,7 @@ def update_skill(request):
         value = data['value']
         user = User.objects.get(username=request.user.username)
         player = Player.objects.get(user=user)
+        print(skill, value)
         if isinstance(value, int):
             if player.story_status == "prepare_to_expedition":
                 if player.training_actions <= 0:
