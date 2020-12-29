@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Allura|Josefin Slab">
         <link href="{% static 'magicjourney/styles.css' %}" rel="stylesheet"/>
         <script src="{% static 'magicjourney/script.js' %}" type="module" defer="defer"></script>
         <title>{% block title %}{% endblock %}</title>
@@ -24,6 +25,7 @@
         </nav>
         
             <div class="content-inside">
+                <h1 id="magicjourney">Magic Journey</h1>
                 {% block body %}
                 {% endblock %}
             </div>
