@@ -11,6 +11,7 @@ import json
 from django.apps import apps
 from markdown2 import Markdown
 from .models import User, Player, Wand, Robe, Book, Charm, Creature
+import requests
 # Create your views here.
 
 
@@ -97,6 +98,9 @@ def create_player(request):
         except:
             player = Player.objects.create(user=user)
             player.save()
+            wand = Wand.objects.get(pk=4)
+            wand.players.add(player)
+            wand.save()
             return JsonResponse({"message": "Player created"}, status=201)
     else:
         return JsonResponse(status=404)
@@ -112,7 +116,6 @@ def update_skill(request):
         value = data['value']
         user = User.objects.get(username=request.user.username)
         player = Player.objects.get(user=user)
-        print(skill, value)
         if isinstance(value, int):
             if player.story_status == "prepare_to_expedition":
                 if player.training_actions <= 0:
@@ -158,8 +161,10 @@ def get_all_items(request):
     model = apps.get_model(User._meta.app_label, model_name, True)
     items = model.objects.all()
     fields = get_serialized_fields(model)
-    print([item.getlist() for item in items])
-    return JsonResponse([[item.getlist() for item in items], fields], status=200, safe=False)
+    items_list = [item.getlist() for item in items]
+    if model_name == "Wand":
+        items_list.remove(items_list[3]) #remove old wand
+    return JsonResponse([items_list, fields], status=200, safe=False)
 
 
 @login_required
