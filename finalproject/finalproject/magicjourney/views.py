@@ -56,14 +56,16 @@ def register(request):
 
 def userpage(request, username):
     user = User.objects.get(username=username)
-    player = Player.objects.get(user=user)
-    equipment = get_equipment(player)
-    fields_values = []
-    #try:
-    fields_values = get_all_fields(player)
-    charms = Charm.objects.filter(players=player)
-    #except:
-        #player = None
+    try:
+        player = Player.objects.get(user=user)
+        equipment = get_equipment(player)
+        fields_values = get_all_fields(player)
+        charms = Charm.objects.filter(players=player)
+    except:
+        player = None
+        charms = []
+        equipment = []
+        fields_values = []
     return render(request, "magicjourney/userpage.html", {"player": player, "equipment": equipment, "fields": fields_values, "charms": charms})
 
 

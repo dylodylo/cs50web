@@ -2,13 +2,16 @@ body {
     background-color: rgb(61, 51, 36);
     background-image: url("hogwart.PNG");
     background-position: center; /* Center the image */
+    background-attachment: fixed;
     background-repeat: no-repeat; /* Do not repeat the image */
     background-size: cover; /* Resize the background image to cover the entire container */
     color: white;
-    height: 100%;
+    min-height: 100%;
+    height: auto;
+    width: 100%;
     margin: 0;
-    box-shadow:inset 0 0 0 2000px rgba(134, 123, 130, 0.678);
     font-family: "Josefin Slab";
+    box-shadow:inset 0 0 0 1000px rgba(134, 123, 130, 0.678);
 }
 
 nav ul {
@@ -56,15 +59,23 @@ html{
   margin: 0;
 }
 .content {
-  min-height: 100%;
+  height: 100%;
+
 }
 .content-inside {
   padding: 20px;
-  padding-bottom: 50px;
+  height: auto;
+
 }
+
 .footer {
-  height: 50px;
-  margin-top: -50px;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  color: white;
+  text-align: center;
+  background-color: #333;
 }
 
 /* Tooltip container */
@@ -111,19 +122,83 @@ html{
   font-size: 30px;
 }
 
-#start {
-  font-size: 20px;
-}
+
 
 #choices select{
   font-size: 30px;
 }
 
-#choices button{
-  font-size: 30px;
-}
 
 .equipment{
   background-color: rgba(48, 45, 49, 0.562);
   overflow: hidden;
+}
+
+button {
+  display: inline-block;
+  text-decoration: none;
+  background-color: rgb(65, 65, 65);
+  color: rgb(255, 255, 255);
+  border: none;
+  padding: 15px 32px;
+  font-family: "Josefin Slab";
+  font-size: 20px;
+  border-radius: 12px;
+  transition-duration: 0.4s;
+  border: 1px solid;
+  position:relative;
+  margin:10px auto;
+  display:inline-block;
+}
+
+button:hover {
+  background-color:black; /* Green */
+  color: white;
+}
+
+#start {
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  clear: both;
+}
+
+#choices {
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align:center;
+  position:relative;
+  clear: right;
+}
+
+.equip-button{
+  font-size: 15px;
+  width: 80px;
+  padding: 5px;
+  margin-left: 5px;
+}
+
+#skills_points_button{
+  width: 150px;
+}
+
+.plus{
+  width: 20px;
+  height: 20px;
+  padding: 0px;
+}
+
+.minus {
+  width: 20px;
+  height: 20px;
+  padding: 0px;
+}
+
+#creature {
+  font-size: 30px;
 }
