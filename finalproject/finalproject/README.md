@@ -1,4 +1,4 @@
-#Magic Journey
+# Magic Journey
 
 1. What is project about?
 2. How navigate through website.
@@ -8,55 +8,55 @@
 6. Some things I'm proud about.
 
 
-#1. What is project about?
+# 1. What is project about?
 
 Magic Journey is simple role-play game made for Harvard CS50Web course as capstone. Website have been made with Django and JavaScript.
 
-#2. How navigate through website.
+# 2. How navigate through website.
 
-####Home
+#### Home
 
 As not logged in you could see only top navbar and project title. To start playing you have to register/login.
 
 After register/login you could see button under title "Start your journey!". It creates your character. Now click "Return to journey!" (you will see this button everytime you log in to website) and you now can play! You have story in middle, your character card on right and action buttons on bottom.
 
-####Player page
+#### Player page
 
 After clicking your name next to "Start" button you could see you character card, when you can spend your skills points, your current equipment and items, that you can equip. Every player starts with his wand only! But you can buy items on Diagon Alley.
 
-####FAQ
+#### FAQ
 
 There you can find answers to your questions about game.
 
-#3. Brief look at files
+# 3. Brief look at files
 
-####utils.py
+#### utils.py
 
 Contain piece of code too large to write in views.py or these one I use multiple times.
 
-####Templates
+#### Templates
 
 Some simple htmls for main site, register, login and userpage.
 
-####Static
+#### Static
 
 This is where my fight with CSS and JS took place. JS files have been split to modules. In overwiew each module should contain functions from another place in game or another functionallity.
 
-####models.py
+#### models.py
 
 For Magic Journey I've created 6 models:
 Player - created for each user. Containt all skills and equipment.
 Wand, Robe, Book - equipment classes. Wands and robes have own statistics, books have charms.
 Charms - Could be learned by player, have various effects.
 
-####Stories
+#### Stories
 
 Text files with stories that appears while playing.
 
-#4. Setup
+# 4. Setup
 
-```git clone https://github.com/ESWZY/cs50web-final-project.git
-cd cs50web-final-project
+```git clone https://github.com/dylodylo/cs50web.git
+cd finalproject/finalproject
 pip install -r requirements.txt
 python manage.py makemigrations
 python manage.py migrate
